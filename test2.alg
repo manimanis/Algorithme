@@ -67,3 +67,11 @@ Fin
 TDO
 Objet : Type/Nature
 s, i : entier
+
+Procédure Saisir2(@a: entier, deb: entier, fin: entier)
+Début
+  Répéter
+    Ecrire("Donner", deb "≤ n ≤", fin, " ? ")
+    Lire(n)
+  Jusqu'à deb ≤ n ≤ fin
+Fin
