@@ -2,7 +2,7 @@
   "name": "tunisian-algorithms-highlighter",
   "displayName": "Extension pour l'Algorithme Tunisien",
   "description": "Syntax highlighting and operator auto-replacement for the Algorithme language",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "mohamedanismani",
   "license": "MIT",
   "engines": {
