@@ -1,0 +1,125 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Algorithme",
+  "scopeName": "source.algorithme",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#predefined-functions"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#brackets"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "name": "comment.line.double-slash.algorithme",
+      "match": "\\/\\/.*$"
+    },
+    "strings": {
+      "name": "string.quoted.double.algorithme",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.algorithme",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "comment": "Multi-word keywords - must be matched before single words",
+          "patterns": [
+            {
+              "name": "keyword.control.algorithme",
+              "match": "(?i)\\bfin\\s+si\\b"
+            },
+            {
+              "name": "keyword.control.algorithme",
+              "match": "(?i)\\bfin\\s+tant\\s+que\\b"
+            },
+            {
+              "name": "keyword.control.algorithme",
+              "match": "(?i)\\btant\\s+que\\b"
+            },
+            {
+              "name": "keyword.control.algorithme",
+              "match": "(?i)\\b(jusqu'à|jusqu_à|jusqu'a|jusqu_a|jusqua)\\b"
+            }
+          ]
+        },
+        {
+          "comment": "Single keywords (case-insensitive)",
+          "name": "keyword.control.algorithme",
+          "match": "(?i)\\b(algorithme|debut|début|fin|si|alors|sinon|faire|répéter|repeter|pour|de|à|pas|procedure|procédure|fonction|tableau|et|ou|non|retourner)\\b"
+        },
+        {
+          "comment": "Data types (case-insensitive)",
+          "name": "storage.type.algorithme",
+          "match": "(?i)\\b(entier|réel|reel|booléen|booleen|caractère|caractere|chaîne|chaine|matrice)\\b"
+        },
+        {
+          "comment": "Boolean constants (case-insensitive)",
+          "name": "constant.language.algorithme",
+          "match": "(?i)\\b(vrai|faux)\\b"
+        }
+      ]
+    },
+    "predefined-functions": {
+      "name": "support.function.algorithme",
+      "match": "(?i)\\b(lire|ecrire|écrire|alea|aléa|chr|ord|racine|pos|sous_chaine|souschaine|effacer|long|ent|estnum|convch|valeur)\\b"
+    },
+    "operators": {
+      "patterns": [
+        {
+          "comment": "Arithmetic operators (blue)",
+          "name": "keyword.operator.arithmetic.algorithme",
+          "match": "(?i)\\b(div|mod)\\b"
+        },
+        {
+          "comment": "Arithmetic symbols (blue)",
+          "name": "keyword.operator.arithmetic.algorithme",
+          "match": "[+\\-*/]"
+        },
+        {
+          "comment": "Comparison operators (green)",
+          "name": "keyword.operator.comparison.algorithme",
+          "match": "=|>=|<=|≥|≤|≠|!=|∈|=|<|>|dans"
+        },
+        {
+          "comment": "Assignment operator (orange/red)",
+          "name": "keyword.operator.assignment.algorithme",
+          "match": "←|<-|<--"
+        }
+      ]
+    },
+    "numbers": {
+      "name": "constant.numeric.algorithme",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    "brackets": {
+      "patterns": [
+        {
+          "name": "punctuation.definition.bracket.algorithme",
+          "match": "[\\[\\]]"
+        }
+      ]
+    }
+  }
+}

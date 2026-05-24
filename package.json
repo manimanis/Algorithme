@@ -1,0 +1,90 @@
+{
+  "name": "tunisian-algorithms-highlighter",
+  "displayName": "Extension pour l'Algorithme Tunisien",
+  "description": "Syntax highlighting and operator auto-replacement for the Algorithme language",
+  "version": "1.0.1",
+  "publisher": "mohamedanismani",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Formatters"
+  ],
+  "activationEvents": [
+    "onLanguage:algorithme"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configurationDefaults": {
+      "[algorithme]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+      }
+    },
+    "languages": [
+      {
+        "id": "algorithme",
+        "aliases": ["Algorithme", "algorithme"],
+        "extensions": [".alg",".algo",".algorithme"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "algorithme",
+        "scopeName": "source.algorithme",
+        "path": "./syntaxes/algorithme.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "algorithme",
+        "path": "./snippets/algorithme.code-snippets.json"
+      }
+    ],
+    "semanticTokenModifiers": [
+      {
+        "id": "arithmetic",
+        "description": "Arithmetic operator (+, -, *, /, div, mod)"
+      },
+      {
+        "id": "comparison",
+        "description": "Comparison operator (>, <, >=, <=, =, ≠, ∈)"
+      },
+      {
+        "id": "assignment",
+        "description": "Assignment operator (←)"
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "scopes": {
+          "operator": ["keyword.operator.algorithme"]
+        }
+      }
+    ],
+    "semanticTokenTypes": [
+      {
+        "id": "operator",
+        "superType": "operator",
+        "description": "Operators in Algorithme"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/example/tunisian-algorithms-highlighter"
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^16.0.0",
+    "@types/vscode": "^1.60.0",
+    "typescript": "^5.0.0"
+  }
+}

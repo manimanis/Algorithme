@@ -1,0 +1,310 @@
+{
+  "Algorithme complet": {
+    "prefix": "algorithme",
+    "body": [
+      "Algorithme ${1:NomAlgorithme}",
+      "Début",
+      "  ${0}",
+      "Fin"
+    ],
+    "description": "Structure complète d'un algorithme"
+  },
+  "Si - Alors": {
+    "prefix": "sisimple",
+    "body": [
+      "Si ${1:condition} Alors",
+      "  ${2:instructions}",
+      "Fin Si"
+    ],
+    "description": "Structure conditionnelle Si...Alors"
+  },
+  "Si - Alors - Sinon": {
+    "prefix": "sicomplete",
+    "body": [
+      "Si ${1:condition} Alors",
+      "  ${2:instructions}",
+      "Sinon",
+      "  ${3:instructions}",
+      "Fin Si"
+    ],
+    "description": "Structure conditionnelle Si...Alors...Sinon"
+  },
+  "Si - Alors - Sinon Si - Alors - Sinon": {
+    "prefix": "sigeneralisee",
+    "body": [
+      "Si ${1:condition} Alors",
+      "  ${2:instructions}",
+      "Sinon Si ${3:condition} Alors",
+      "  ${4:instructions}",
+      "Sinon",
+      "  ${5:instructions}",
+      "Fin Si"
+    ],
+    "description": "Structure conditionnelle Si...Alors...Sinon Si...Alors...Sinon"
+  },
+  "Tant Que": {
+    "prefix": "tantque",
+    "body": [
+      "Tant Que ${1:condition} Faire",
+      "  ${0:instructions}",
+      "Fin Tant Que"
+    ],
+    "description": "Boucle Tant Que"
+  },
+  "Répéter - Jusqu'à": {
+    "prefix": ["repeter", "répéter"],
+    "body": [
+      "Répéter",
+      "  ${0:instructions}",
+      "Jusqu'à ${1:condition}"
+    ],
+    "description": "Boucle Répéter...Jusqu'à"
+  },
+  "Pour avec Pas": {
+    "prefix": "pourpas",
+    "body": [
+      "Pour ${1:i} de ${2:1} à ${3:N} Faire [Pas=${4:1}]",
+      "  ${0:instructions}",
+      "Fin Pour"
+    ],
+    "description": "Boucle Pour"
+  },
+  "Pour": {
+    "prefix": "pour",
+    "body": [
+      "Pour ${1:i} de ${2:1} à ${3:N} Faire",
+      "  ${0:instructions}",
+      "Fin Pour"
+    ],
+    "description": "Boucle Pour"
+  },
+  "Procédure": {
+    "prefix": "procedure",
+    "body": [
+      "Procédure ${1:NomProcedure}(${2:paramètres})",
+      "Début",
+      "  ${0:instructions}",
+      "Fin"
+    ],
+    "description": "Définition d'une procédure"
+  },
+  "Fonction": {
+    "prefix": "fonction",
+    "body": [
+      "Fonction ${1:NomFonction}(${2:paramètres}):${3:typeRetour}",
+      "Début",
+      "  ${0:instructions}",
+      "  Retourner ${4:valeur}",
+      "Fin"
+    ],
+    "description": "Définition d'une fonction"
+  },
+  "TDNT": {
+    "prefix": "tdnt",
+    "body": [
+      "TDNT",
+      "${1:NomTableau} = Tableau de ${2:taille} ${3:type}"
+    ],
+    "description": "Instruction de retour"
+  },
+  "TDO": {
+    "prefix": "tdo",
+    "body": [
+      "TDO",
+      "Objet : Type/Nature",
+      "${1:var} : ${2:type}"
+    ],
+    "description": "Instruction de retour"
+  },
+  "Tableau": {
+    "prefix": "tableau",
+    "body": [
+      "${1:NomTableau} = Tableau de ${2:taille} ${3:type}"
+    ],
+    "description": "Déclaration d'un tableau"
+  },
+  "Lire": {
+    "prefix": "lire",
+    "body": [
+      "Lire(${1:variable})"
+    ],
+    "description": "Instruction de lecture"
+  },
+  "Ecrire": {
+    "prefix": "ecrire",
+    "body": [
+      "Ecrire(${1:message})"
+    ],
+    "description": "Instruction d'écriture"
+  },
+  "Si avec opérateur ∈": {
+    "prefix": "appartient",
+    "body": [
+      "Si ${1:valeur} ∈ ${2:tableau} Alors",
+      "  ${0:instructions}",
+      "Fin Si"
+    ],
+    "description": "Condition avec appartenance à un tableau"
+  },
+  "Déclaration variable": {
+    "prefix": "var",
+    "body": [
+      "${1:nom} : ${2|entier,réel,caractère,chaine,booléen|}"
+    ],
+    "description": "Déclaration d'une variable"
+  },
+  "Affectation": {
+    "prefix": "affectation",
+    "body": [
+      "${1:variable} ← ${2:valeur}"
+    ],
+    "description": "Opérateur d'affectation"
+  },
+  "incrementer": {
+    "prefix": "incrementer",
+    "body": [
+      "${1:variable} ← ${1:variable} + ${2|1|}"
+    ],
+    "description": "Opérateur d'incrémentation"
+  },
+  "decrementer": {
+    "prefix": "decrementer",
+    "body": [
+      "${1:variable} ← ${1:variable} - ${2|1|}"
+    ],
+    "description": "Opérateur de décrémentation"
+  },
+  "Saisir": {
+    "prefix": "saisir",
+    "body": [
+      "Procédure Saisir(@${1:n}: entier)",
+      "Début",
+      "  Répéter",
+      "    Ecrire(\"Entrez ${1:n} ? \")",
+      "    Lire(${1:n})",
+      "  Jusqu'à ${2:valeurMin} ≤ ${1:n} ≤ ${3:valeurMax}",
+      "Fin"
+    ],
+    "description": "Instruction de saisie"
+  },
+  "Remplir": {
+    "prefix": "remplir",
+    "body": [
+      "Procédure Remplir(@${1:t}: ${2:Tab}, ${3:n}: entier)",
+      "Début",
+      "  Pour i de 0 à ${3:n} - 1 Faire",
+      "    Ecrire(\"Entrez ${1:t}[\", ${i}, \"] ? \")",
+      "    Lire(${1:t}[${i}])",
+      "  Fin Pour",
+      "Fin"
+    ],
+    "description": "Instruction de remplissage d'un tableau"
+  },
+  "Afficher": {
+    "prefix": "afficher",
+    "body": [
+      "Procédure Afficher(${1:t}: ${2:Tab}, ${3:n}: entier)",
+      "Début",
+      "  Pour i de 0 à ${3:n} - 1 Faire",
+      "    Ecrire(${1:t}[${i}])",
+      "  Fin Pour",
+      "Fin"
+    ],
+    "description": "Instruction d'affichage d'un tableau"
+  },
+  "tribulles": {
+    "prefix": "tribulles",
+    "body": [
+      "Procédure TriBulles(@${1:t}: ${2:Tab}, ${3:n}: entier)",
+      "Début",
+      "  Répéter",
+      "    ${4:trié} ← Vrai",
+      "    Pour i de 0 à ${3:n} - 2 Faire",
+      "      Si ${1:t}[${i}] > ${1:t}[${i + 1}] Alors",
+      "        // Échange des éléments",
+      "        aux ← ${1:t}[${i}]",
+      "        ${1:t}[${i}] ← ${1:t}[${i + 1}]",
+      "        ${1:t}[${i + 1}] ← aux",
+      "        ${4:trié} ← Faux",
+      "      Fin Si",
+      "    Fin Pour",
+      "  Jusqu'à ${4:trié}",
+      "Fin"
+    ],
+    "description": "Procedure de tri bulle"
+  },
+  "triselection": {
+    "prefix": "triselection",
+    "body": [
+      "Procédure TriSelection(@${1:t}: ${2:Tab}, ${3:n}: entier)",
+      "Début",
+      "  Pour i de 0 à ${3:n} - 2 Faire",
+      "    min ← i",
+      "    Pour j de i + 1 à ${3:n} - 1 Faire",
+      "      Si ${1:t}[j] < ${1:t}[min] Alors",
+      "        min ← j",
+      "      Fin Si",
+      "    Fin Pour",
+      "    Si min ≠ i Alors",
+      "      // Échange des éléments",
+      "      aux ← ${1:t}[i]",
+      "      ${1:t}[i] ← ${1:t}[min]",
+      "      ${1:t}[min] ← aux",
+      "    Fin Si",
+      "  Fin Pour",
+      "Fin"
+    ],
+    "description": "Procedure de tri par sélection"
+  },
+  "triinsertion": {
+    "prefix": "triinsertion",
+    "body": [
+      "Procédure TriInsertion(@${1:t}: ${2:Tab}, ${3:n}: entier)",
+      "Début",
+      "  Pour i de 1 à ${3:n} - 1 Faire",
+      "    x ← ${1:t}[i]",
+      "    j ← i",
+      "    Tant que j > 0 et ${1:t}[j - 1] > x Faire",
+      "      ${1:t}[j] ← ${1:t}[j - 1]",
+      "      j ← j - 1",
+      "    Fin Tant que",
+      "    ${1:t}[j] ← x",
+      "  Fin Pour",
+      "Fin"
+    ],
+    "description": "Procedure de tri par insertion"
+  },
+  "rechercher":{
+    "prefix": "rechercher",
+    "body": [
+      "Fonction Rechercher(${4:v}: ${5:entier}, ${1:t}: ${2:Tab}, ${3:n}: entier):entier",
+      "Début",
+      "  p ← -1",
+      "  Tant que p = -1 et i < ${3:n} Faire",
+      "    Si ${1:t}[i] = ${4:v} Alors",
+      "      p ← i",
+      "    Fin Si",
+      "    i ← i + 1",
+      "  Fin Tant que",
+      "  Retourner p",
+      "Fin"
+    ],
+    "description": "Fonction de recherche"
+  },
+  "verif":{
+    "prefix": "verif",
+    "body": [
+      "Fonction Verif(${1:ch}: ${2:chaîne}):booleen",
+      "Début",
+      "  test ← Long(ch) > 0",
+      "  i ← 0",
+      "  Tant que test et i < Long(ch) Faire",
+      "    test ← \"A\" ≤ Majus(${1:ch}[i]) ≤ \"Z\"",
+      "    i ← i + 1",
+      "  Fin Tant que",
+      "  Retourner test",
+      "Fin"
+    ],
+    "description": "Fonction de vérification"
+  }
+}
