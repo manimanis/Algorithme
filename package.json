@@ -75,7 +75,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/example/tunisian-algorithms-highlighter"
+    "url": "https://github.com/manimanis/Algorithme"
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
