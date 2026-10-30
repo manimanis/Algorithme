@@ -16,11 +16,15 @@ t : Tab1
 Saisir : Procédure
 Calc : Fonction
 
+TDOG
+Objet : Type/Nature
+var : type
+
 Procédure Saisir(@n: entier)
 Début
   Répéter
-  Ecrire("Entrez n ? ")
-  Lire(n)
+    Ecrire("Entrez n ? ")
+    Lire(n)
   Jusqu'à 5 ≤ n ≤ 10
 Fin
 
@@ -71,7 +75,7 @@ s, i : entier
 Procédure Saisir2(@a: entier, deb: entier, fin: entier)
 Début
   Répéter
-    Ecrire("Donner", deb "≤ n ≤", fin, " ? ")
-    Lire(n)
-  Jusqu'à deb ≤ n ≤ fin
+  Ecrire("Donner", deb "≤ n ≤", fin, " ? ")
+  Lire(n)
+Jusqu'à deb ≤ n ≤ fin
 Fin

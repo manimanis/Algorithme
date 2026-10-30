@@ -1,8 +1,8 @@
 {
   "name": "tunisian-algorithms-highlighter",
   "displayName": "Extension pour l'Algorithme Tunisien",
-  "description": "Syntax highlighting and operator auto-replacement for the Algorithme language",
-  "version": "1.0.2",
+  "description": "Syntax highlighting, operator auto-replacement and preview with TDO/TDNT tables for the Algorithme language",
+  "version": "1.2.1",
   "publisher": "mohamedanismani",
   "license": "MIT",
   "engines": {
@@ -13,10 +13,35 @@
     "Formatters"
   ],
   "activationEvents": [
-    "onLanguage:algorithme"
+    "onLanguage:algorithme",
+    "onCommand:algorithme.showPreview"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "algorithme.showPreview",
+        "title": "Algorithme : Ouvrir l'aperçu (avec tableaux TDO/TDNT)",
+        "icon": "$(open-preview)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "algorithme.showPreview",
+          "when": "editorLangId == algorithme",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "algorithme.showPreview",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "editorLangId == algorithme"
+      }
+    ],
     "configurationDefaults": {
       "[algorithme]": {
         "editor.tabSize": 2,
@@ -26,8 +51,15 @@
     "languages": [
       {
         "id": "algorithme",
-        "aliases": ["Algorithme", "algorithme"],
-        "extensions": [".alg",".algo",".algorithme"],
+        "aliases": [
+          "Algorithme",
+          "algorithme"
+        ],
+        "extensions": [
+          ".alg",
+          ".algo",
+          ".algorithme"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -61,7 +93,9 @@
     "semanticTokenScopes": [
       {
         "scopes": {
-          "operator": ["keyword.operator.algorithme"]
+          "operator": [
+            "keyword.operator.algorithme"
+          ]
         }
       }
     ],
@@ -80,7 +114,8 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "package": "npx @vscode/vsce package"
   },
   "devDependencies": {
     "@types/node": "^16.0.0",

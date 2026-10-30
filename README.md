@@ -1,198 +1,161 @@
 # Extension pour l'Algorithme Tunisien
 
-[![Version](https://img.shields.io/badge/version-1.0.2-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-1.2.1-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-Une extension VS Code complète pour le langage **Algorithme** — un pseudocode algorithmique utilisé dans l'enseignement de l'informatique en Tunisie.
+Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.
 
 ---
 
-## Fonctionnalités
+## 🌟 Fonctionnalités Principales
 
-### 🎨 Coloration Syntaxique
-Coloration intelligente de tous les éléments du langage Algorithme :
-- **Mots-clés** : `Algorithme`, `Début`, `Fin`, `Si`, `Alors`, `Sinon`, `Fin Si`, `Tant Que`, `Faire`, `Fin Tant Que`, `Répéter`, `Jusqu'à`, `Pour`, `De`, `À`, `Pas`, `Procédure`, `Fonction`, `Tableau`, `Retourner`, `Selon`, `Cas`, `Fin Selon`
-- **Types de données** : `entier`, `réel`, `booléen`, `caractère`, `chaine`, `matrice`
-- **Fonctions prédéfinies** : `Lire`, `Ecrire`, `Aléa`, `Chr`, `Ord`, `Sous_chaine`, `Effacer`, `Long`, `Ent`, `Estnum`, `Convch`, `Valeur`, `Majus`, `Minus`, `Pos`
-- **Opérateurs** : `+`, `-`, `*`, `/`, `Div`, `Mod`, `>`, `<`, `≥`, `≤`, `=`, `≠`, `←`, `∈`
-- **Littéraux** : chaînes de caractères (`"..."`), nombres (entiers et réels), booléens (`Vrai`, `Faux`)
-- **Commentaires** : ligne (`//`), bloc (`/* ... */`)
-- **Indices de tableau/matrice** : `[` et `]`
+### 📋 Aperçu Visuel & Export (TDO / TDNT / Word / PDF)
+Ouvrez un panneau d'aperçu dynamique à côté de votre code via le raccourci **`Ctrl+Shift+V`** (ou **`Cmd+Shift+V`** sur Mac), ou en cliquant sur l'icône **Ouvrir l'aperçu** dans la barre de titre de l'éditeur.
+
+- **Reconnaissance automatique des tableaux d'objets et de types** :
+  - **TDO** (Tableau de Déclaration des Objets)
+  - **TDOL** (Objets Locaux)
+  - **TDOG** (Objets Globaux)
+  - **TDNT** (Tableau de Déclaration des Nouveaux Types)
+  - Prise en charge des formats avec deux-points (`Objet : Type/Nature`), avec barres (`| Objet | Type |`) ou avec délimiteurs textuels.
+- **Mise à jour en temps réel** : Toute modification apportée à votre fichier `.alg` se répercute instantanément dans l'aperçu.
+- **Boutons d'action intégrés** :
+  - 📋 **Copier pour Word** : Copie l'algorithme complet avec sa coloration syntaxique et ses tableaux mis en forme directement dans le presse-papiers, prêt à être collé (`Ctrl+V`) dans Microsoft Word ou LibreOffice.
+  - 📄 **Exporter .doc (Word)** : Génère un document Microsoft Word (`.doc`) prêt à l'emploi avec bordures de tableaux, polices adaptées et indentation préservée.
+  - 🌓 **Thème (Mode Clair / Sombre)** : Bascule l'affichage de l'aperçu entre mode sombre et mode clair avec mémorisation de votre choix.
+  - 🖨️ **Imprimer / PDF** : Lance la boîte de dialogue d'impression ou d'enregistrement au format PDF avec un style épuré optimisé pour le papier.
+
+---
+
+### 🎨 Coloration Syntaxique Complète
+Coloration intelligente et fidèle aux normes pédagogiques tunisiennes :
+- **Mots-clés** : `Algorithme`, `Début`, `Fin`, `Si`, `Alors`, `Sinon`, `Fin Si`, `Tant Que`, `Faire`, `Fin Tant Que`, `Répéter`, `Jusqu'à`, `Pour`, `De`, `À`, `Pas`, `Fin Pour`, `Procédure`, `Fonction`, `Tableau`, `Retourner`, `Selon`, `Cas`, `Fin Selon`
+- **Types de données** : `entier`, `réel`, `booléen`, `caractère`, `chaîne` / `chaine`, `matrice`
+- **Fonctions prédéfinies** : `Lire`, `Ecrire` / `Écrire`, `Aléa`, `Chr`, `Ord`, `Sous_chaine`, `Effacer`, `Long`, `Ent`, `Estnum`, `Convch`, `Valeur`, `Majus`, `Minus`, `Pos`, `Racine`
+- **Opérateurs** : `+`, `-`, `*`, `/`, `Div`, `Mod`, `>`, `<`, `≥`, `≤`, `=`, `≠`, `←`, `∈`, `Et`, `Ou`, `Non`
+- **Littéraux** : Chaînes de caractères (`"..."`), nombres entiers et réels, booléens (`Vrai`, `Faux`)
+- **Commentaires** : Commentaires en ligne (`//`) et blocs multi-lignes (`/* ... */`)
+
+---
 
 ### 🔄 Remplacement Automatique d'Opérateurs
-L'extension remplace automatiquement certains symboles tapés au clavier par leurs équivalents algorithmiques :
+Pour gagner du temps et respecter les symboles mathématiques et algorithmiques officiels, l'extension remplace automatiquement lors de la frappe :
 
-| Saisie clavier | Résultat |
-|----------------|----------|
-| `>=`           | `≥`      |
-| `<=`           | `≤`      |
-| `!=`           | `≠`      |
-| `gt ` (espace) | `> `     |
-| `lt ` (espace) | `< `     |
-| `dans ` (espace) ou `dans` + caractère non-alphanumérique | `∈` |
+| Saisie clavier | Résultat | Description |
+|:--------------:|:--------:|-------------|
+| `<-`           | `←`      | Opérateur d'affectation |
+| `<>` ou `!=`   | `≠`      | Différent de |
+| `>=`           | `≥`      | Supérieur ou égal |
+| `<=`           | `≤`      | Inférieur ou égal |
+| `gt ` (espace) | `> `     | Strictement supérieur |
+| `lt ` (espace) | `< `     | Strictement inférieur |
+| `dans ` (espace) ou `dans` + symbole | `∈` | Opérateur d'appartenance |
 
-### ✨ Snippets (Extraits de Code)
-De nombreux snippets pour accélérer l'écriture du code :
+---
 
-#### Structures de base
+### ✨ Snippets Intelligents
+Des dizaines de raccourcis d'insertion de code pour coder plus vite :
+
+#### Structures et Déclarations
 | Préfixe | Description |
 |---------|-------------|
-| `algorithme` | Structure complète d'un algorithme |
-| `var` | Déclaration d'une variable (avec sélecteur de type) |
-| `affectation` | Opérateur d'affectation `←` |
+| `algorithme` | Squelette complet d'un algorithme |
+| `var` | Déclaration d'une variable avec sélection du type |
+| `affectation` | Insertion rapide de `←` |
+| `tdo` | Modèle de Tableau des Objets |
+| `tdnt` | Modèle de Tableau des Nouveaux Types |
 
-#### Structures conditionnelles
+#### Structures de Contrôle & Boucles
 | Préfixe | Description |
 |---------|-------------|
-| `sisimple` | `Si...Alors...Fin Si` |
-| `sicomplete` | `Si...Alors...Sinon...Fin Si` |
-| `sigeneralisee` | `Si...Alors...Sinon Si...Alors...Sinon...Fin Si` |
-| `appartient` | Condition avec opérateur `∈` |
+| `sisimple` | `Si ... Alors ... Fin Si` |
+| `sicomplete` | `Si ... Alors ... Sinon ... Fin Si` |
+| `sigeneralisee` | `Si ... Alors ... Sinon Si ... Fin Si` |
+| `tantque` | `Tant Que ... Faire ... Fin Tant Que` |
+| `repeter` / `répéter` | `Répéter ... Jusqu'à ...` |
+| `pour` | `Pour ... de ... à ... Faire ... Fin Pour` |
+| `pourpas` | `Pour ... avec Pas` |
+| `selon` | Structure `Selon ... Cas ... Fin Selon` |
 
-#### Boucles
-| Préfixe | Description |
-|---------|-------------|
-| `tantque` | Boucle `Tant Que...Faire...Fin Tant Que` |
-| `repeter` / `répéter` | Boucle `Répéter...Jusqu'à` |
-| `pour` | Boucle `Pour...de...à...Faire...Fin Pour` |
-| `pourpas` | Boucle `Pour...avec Pas` |
-
-#### Sous-programmes
+#### Sous-programmes & Algorithmes Classiques
 | Préfixe | Description |
 |---------|-------------|
 | `procedure` | Définition d'une procédure |
-| `fonction` | Définition d'une fonction (avec `Retourner`) |
-
-#### Tableaux
-| Préfixe | Description |
-|---------|-------------|
-| `tableau` | Déclaration d'un tableau |
-| `tdnt` | Tableau de Nombres / Types |
-| `tdo` | Tableau des Objets |
-
-#### Opérations courantes
-| Préfixe | Description |
-|---------|-------------|
-| `lire` | Instruction de lecture |
-| `ecrire` | Instruction d'écriture |
-| `incrementer` | Incrémentation d'une variable |
-| `decrementer` | Décrémentation d'une variable |
-| `saisir` | Procédure de saisie avec contrôle |
-| `remplir` | Procédure de remplissage d'un tableau |
-| `afficher` | Procédure d'affichage d'un tableau |
-
-#### Algorithmes classiques
-| Préfixe | Description |
-|---------|-------------|
-| `tribulles` | Tri à bulles (Bubble Sort) |
-| `triselection` | Tri par sélection (Selection Sort) |
-| `triinsertion` | Tri par insertion (Insertion Sort) |
+| `fonction` | Définition d'une fonction avec `Retourner` |
+| `saisir` | Procédure de saisie contrôlée |
+| `remplir` | Remplissage d'un tableau |
+| `afficher` | Affichage des éléments d'un tableau |
+| `tribulles` | Algorithme de tri à bulles |
+| `triselection`| Algorithme de tri par sélection |
+| `triinsertion`| Algorithme de tri par insertion |
 | `rechercher` | Recherche séquentielle dans un tableau |
-| `verif` | Fonction de vérification de chaîne |
-
-### 📝 Formateur de Document
-L'extension inclut un formateur qui indente automatiquement votre code selon les blocs :
-- Les mots-clés ouvrants (`Début`, `Faire`, `Alors`) augmentent le niveau d'indentation
-- Les mots-clés fermants (`Fin`, `Jusqu'à`) diminuent le niveau d'indentation
-- Les lignes vides sont préservées
-- Indentation configurable (par défaut : 2 espaces)
-
-### ⚙️ Configuration du Langage
-- Commentaires : ligne (`//`) et bloc (`/* */`)
-- Paires de délimiteurs auto-fermantes : `()`, `{}`, `[]`, `""`
-- Règles d'indentation intelligentes
 
 ---
 
-## Extensions de Fichier
+### 📝 Formateur Automatique de Document
+Indentation automatique et harmonisation des blocs de code :
+- Touche de raccourci : `Shift+Alt+F` (Windows) ou `Shift+Option+F` (Mac).
+- Les mots-clés ouvrants (`Début`, `Faire`, `Alors`, `Répéter`) incrémentent l'indentation.
+- Les mots-clés fermants (`Fin`, `Jusqu'à`, `Sinon`) ajustent l'alignement.
+- Taille d'indentation configurable (par défaut : 2 espaces).
 
-| Extension | Usage |
-|-----------|-------|
-| `.alg` | Recommandée |
+---
+
+## 📁 Extensions de Fichiers Reconnues
+
+| Extension | Statut |
+|-----------|--------|
+| `.alg` | **Recommandée** |
 | `.algo` | Alternative |
-| `.algorithme` | Alternative complète |
+| `.algorithme` | Alternative longue |
 
 ---
 
-## Installation
+## 🚀 Utilisation de l'Aperçu (TDO / TDNT)
 
-### Depuis le Marketplace VS Code (recommandée)
-1. Ouvrez VS Code
-2. Allez dans l'onglet **Extensions** (`Ctrl+Shift+X`)
-3. Recherchez **"Algorithme Tunisien"**
-4. Cliquez sur **Installer**
-
-### Depuis un fichier VSIX
-1. Téléchargez le fichier `.vsix` depuis la [page des releases](https://github.com/manimanis/Algorithme/releases)
-2. Dans VS Code, appuyez sur `Ctrl+Shift+P` et exécutez : `Extensions: Install from VSIX...`
-3. Sélectionnez le fichier `.vsix` téléchargé
-
----
-
-## Exemple Complet
+Créez un fichier `mon_algo.alg` et structurez vos déclarations comme suit :
 
 ```algorithme
-Algorithme CalculMoyenne
+Algorithme SommePairs
 Début
-  // Saisie des notes
-  Ecrire("Entrez la note 1 : ")
-  Lire(note1)
-
-  Ecrire("Entrez la note 2 : ")
-  Lire(note2)
-
-  // Calcul de la moyenne
-  moyenne ← (note1 + note2) / 2
-
-  // Affichage du résultat
-  Ecrire("La moyenne est : ")
-  Ecrire(moyenne)
-Fin
-```
-
-### Exemple avec structures conditionnelles et boucles
-
-```algorithme
-Algorithme VerificationNote
-Début
-  Répéter
-    Ecrire("Entrez une note (0-20) : ")
-    Lire(note)
-  Jusqu'à 0 ≤ note ∈ 20
-
-  Si note ≥ 10 Alors
-    Ecrire("Admis")
-  Sinon
-    Ecrire("Ajourné")
-  Fin Si
-Fin
-```
-
-### Exemple de procédure avec tableau
-
-```algorithme
-Procédure RemplirEtAfficher(@t : Tab, n : entier)
-Début
-  Pour i de 0 à n - 1 Faire
-    Ecrire("Entrez t[", i, "] : ")
-    Lire(t[i])
+  Ecrire("Donner n : ")
+  Lire(n)
+  s ← 0
+  Pour i de 1 à n Faire
+    Si (i Mod 2 = 0) Alors
+      s ← s + i
+    Fin Si
   Fin Pour
-
-  Pour i de 0 à n - 1 Faire
-    Ecrire(t[i])
-  Fin Pour
+  Ecrire("Somme des pairs : ", s)
 Fin
+
+TDO
+Objet : Type/Nature
+n, i, s : entier
 ```
+
+Appuyez sur `Ctrl+Shift+V` pour afficher l'aperçu avec le tableau TDO formaté, puis cliquez sur **📋 Copier pour Word** ou **📄 Exporter .doc** pour intégrer votre travail directement dans un document Word ou un sujet d'examen !
 
 ---
 
-## Développement
+## 💻 Installation
 
-### Prérequis
-- [Node.js](https://nodejs.org/) (v16 ou supérieur)
-- [VS Code](https://code.visualstudio.com/) (v1.60 ou supérieur)
+### Depuis le Marketplace VS Code (recommandé)
+1. Ouvrez VS Code.
+2. Ouvrez la vue Extensions (`Ctrl+Shift+X`).
+3. Recherchez **"Algorithme Tunisien"**.
+4. Cliquez sur **Installer**.
 
-### Construction
+### Depuis un package VSIX
+1. Téléchargez le fichier `.vsix` depuis les [releases GitHub](https://github.com/manimanis/Algorithme/releases).
+2. Dans VS Code, ouvrez la palette de commandes (`Ctrl+Shift+P`).
+3. Tapez et sélectionnez : `Extensions: Install from VSIX...`.
+4. Choisissez le fichier `.vsix`.
+
+---
+
+## 🛠️ Développement & Contribution
+
 ```bash
 # Cloner le dépôt
 git clone https://github.com/manimanis/Algorithme.git
@@ -203,35 +166,19 @@ npm install
 # Compiler le code TypeScript
 npm run compile
 
-# Lancer le débogage (F5 dans VS Code)
-```
-
-### Structure du Projet
-```
-tunisian-algorithms-highlighter/
-├── .vscodeignore
-├── CHANGELOG.md
-├── language-configuration.json    # Configuration du langage
-├── package.json                   # Manifeste de l'extension
-├── tsconfig.json                  # Configuration TypeScript
-├── snippets/
-│   └── algorithme.code-snippets.json  # Snippets de code
-├── src/
-│   └── extension.ts               # Code principal de l'extension
-└── syntaxes/
-    └── algorithme.tmLanguage.json # Grammaire TextMate pour la coloration
+# Lancer le débogage (Appuyez sur F5 dans VS Code)
 ```
 
 ---
 
-## Licence
+## 📜 Licence
 
-MIT — voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Distribué sous licence **MIT**. Voir le fichier [LICENSE](LICENSE) pour plus d'informations.
 
 ---
 
-## À Propos
+## 👤 Auteur
 
-Développé par **Mohamed Anis Mani** pour faciliter l'écriture d'algorithmes en langage Algorithme dans VS Code, destiné aux étudiants et enseignants en informatique en Tunisie.
+Conçu et développé par **Mohamed Anis Mani** pour moderniser et faciliter l'apprentissage ainsi que l'enseignement de l'algorithmique en Tunisie.
 
 [![GitHub](https://img.shields.io/badge/GitHub-manimanis-181717?logo=github)](https://github.com/manimanis)

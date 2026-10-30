@@ -11,9 +11,6 @@ debut
     ecrire("Mineur")
   fin si
 
-
-  
-
   tant que age < 30 faire
     age ← age + 1
   fin tant que
