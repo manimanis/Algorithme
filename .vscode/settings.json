@@ -1,0 +1,19 @@
+{
+  "editor.tabSize": 2,
+  "editor.indentSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.useTabStops": false,
+  "files.associations": {
+    "*.alg": "algorithme",
+    "*.algo": "algorithme",
+    "*.algorithme": "algorithme"
+  },
+  "[algorithme]": {
+    "editor.tabSize": 2,
+    "editor.indentSize": 2,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.useTabStops": false
+  }
+}

@@ -83,7 +83,7 @@
     },
     "predefined-functions": {
       "name": "support.function.algorithme",
-      "match": "(?i)\\b(lire|ecrire|écrire|alea|aléa|chr|ord|racine|pos|sous_chaine|souschaine|effacer|long|ent|estnum|convch|valeur)\\b"
+      "match": "(?i)\\b(lire|ecrire|écrire|alea|aléa|chr|ord|racine|pos|sous_chaine|souschaine|effacer|long|ent|estnum|convch|valeur|majus)\\b"
     },
     "operators": {
       "patterns": [

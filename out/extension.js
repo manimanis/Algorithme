@@ -40,17 +40,61 @@ const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const os = __importStar(require("os"));
 const child_process_1 = require("child_process");
+const blockValidator_1 = require("./blockValidator");
 let isProcessing = false;
 let previewPanel = undefined;
 let currentPreviewDocument = undefined;
 let webviewLoaded = false; // true once the shell HTML has been set on the panel
 function activate(context) {
     console.log('Algorithme extension activated');
-    // --- Auto-replacement on type ---
-    const replaceDisposable = vscode.workspace.onDidChangeTextDocument((event) => {
-        if (isProcessing)
+    // --- Block Diagnostics (Vérification de l'existence des expressions fermantes) ---
+    const diagnosticCollection = vscode.languages.createDiagnosticCollection('algorithme');
+    context.subscriptions.push(diagnosticCollection);
+    let diagTimeout;
+    function updateDiagnostics(doc) {
+        if (doc.languageId !== 'algorithme')
             return;
+        if (diagTimeout)
+            clearTimeout(diagTimeout);
+        diagTimeout = setTimeout(() => {
+            const diagnostics = (0, blockValidator_1.validateAlgorithmeBlocks)(doc);
+            diagnosticCollection.set(doc.uri, diagnostics);
+        }, 150);
+    }
+    // Function to strictly enforce 2-space indentation on Algorithme editors
+    function enforceIndentation(editor) {
+        if (editor && editor.document.languageId === 'algorithme') {
+            editor.options.tabSize = 2;
+            editor.options.indentSize = 2;
+            editor.options.insertSpaces = true;
+        }
+    }
+    // Initial validation & indentation enforcement
+    if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document.languageId === 'algorithme') {
+        enforceIndentation(vscode.window.activeTextEditor);
+        updateDiagnostics(vscode.window.activeTextEditor.document);
+    }
+    context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(doc => {
+        if (doc.languageId === 'algorithme') {
+            updateDiagnostics(doc);
+            enforceIndentation(vscode.window.activeTextEditor);
+        }
+    }), vscode.workspace.onDidSaveTextDocument(doc => updateDiagnostics(doc)), vscode.window.onDidChangeActiveTextEditor(editor => {
+        if (editor && editor.document.languageId === 'algorithme') {
+            enforceIndentation(editor);
+            updateDiagnostics(editor.document);
+        }
+    }), vscode.workspace.onDidCloseTextDocument(doc => diagnosticCollection.delete(doc.uri)));
+    // Register Quick Fix provider (CodeActionProvider)
+    context.subscriptions.push(vscode.languages.registerCodeActionsProvider('algorithme', new blockValidator_1.BlockQuickFixProvider(), {
+        providedCodeActionKinds: blockValidator_1.BlockQuickFixProvider.providedCodeActionKinds
+    }));
+    // --- Auto-replacement on type & Auto-closing of blocks ---
+    const replaceDisposable = vscode.workspace.onDidChangeTextDocument((event) => {
         if (event.document.languageId !== 'algorithme')
+            return;
+        updateDiagnostics(event.document);
+        if (isProcessing)
             return;
         const editor = vscode.window.activeTextEditor;
         if (!editor || editor.document.uri.toString() !== event.document.uri.toString())
@@ -59,6 +103,44 @@ function activate(context) {
             const text = change.text;
             if (text.length === 0)
                 continue;
+            // Auto-closing of blocks on Enter
+            if (text.includes('\n')) {
+                const prevLineIndex = change.range.start.line;
+                if (prevLineIndex >= 0 && prevLineIndex < editor.document.lineCount) {
+                    const prevLineText = editor.document.lineAt(prevLineIndex).text;
+                    const opening = (0, blockValidator_1.getOpeningBlockFromLine)(prevLineText);
+                    if (opening) {
+                        setTimeout(() => {
+                            try {
+                                const currentEditor = vscode.window.activeTextEditor;
+                                if (!currentEditor || currentEditor.document.uri.toString() !== event.document.uri.toString())
+                                    return;
+                                // Verify that the block is currently unclosed in the document
+                                if ((0, blockValidator_1.isBlockUnclosedFromLine)(currentEditor.document, prevLineIndex)) {
+                                    const currentLine = prevLineIndex + 1;
+                                    if (currentLine < currentEditor.document.lineCount) {
+                                        const baseIndent = prevLineText.match(/^\s*/)?.[0] || '';
+                                        const closeText = `\n${baseIndent}${opening.expectedClose}`;
+                                        const lineEnd = currentEditor.document.lineAt(currentLine).range.end;
+                                        isProcessing = true;
+                                        currentEditor.edit(builder => {
+                                            builder.insert(lineEnd, closeText);
+                                        }, { undoStopBefore: false, undoStopAfter: false }).then(() => {
+                                            isProcessing = false;
+                                            updateDiagnostics(currentEditor.document);
+                                        }, () => {
+                                            isProcessing = false;
+                                        });
+                                    }
+                                }
+                            }
+                            catch {
+                                isProcessing = false;
+                            }
+                        }, 30);
+                    }
+                }
+            }
             const line = change.range.start.line;
             const lineText = editor.document.lineAt(line).text;
             const col = change.range.start.character + text.length;

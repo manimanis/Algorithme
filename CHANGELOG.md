@@ -4,6 +4,21 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
+## [1.3.3] - 2026-10-31
+
+### Added
+- **Vérification automatique de l'existence des expressions fermantes** (Diagnostics / Problèmes) :
+  - `Début` ➔ `Fin`
+  - `Si ... Alors` ➔ `Fin Si`
+  - `Tant Que ... Faire` ➔ `Fin Tant Que`
+  - `Répéter` ➔ `Jusqu'à`
+  - `Pour ... Faire` ➔ `Fin Pour`
+  - `Selon` ➔ `Fin Selon`
+- **Fermeture automatique à la frappe** : insertion intelligente du mot-clé de fermeture lors de l'appui sur `Entrée` après une expression ouvrante si elle n'est pas encore fermée.
+- **Actions rapides (Quick Fix / 💡)** : possibilité d'insérer en un clic l'expression fermante manquante depuis l'ampoule VS Code (`Ctrl+.`).
+
+---
+
 ## [1.2.1] - 2026-10-30
 
 ### Fixed & Improved

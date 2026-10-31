@@ -1,6 +1,6 @@
 # Extension pour l'Algorithme Tunisien
 
-[![Version](https://img.shields.io/badge/version-1.2.1-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-1.3.3-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.
@@ -8,6 +8,22 @@ Une extension VS Code complète et moderne pour le langage **Algorithme** — le
 ---
 
 ## 🌟 Fonctionnalités Principales
+
+### 🛡️ Vérification des Blocs & Fermeture Automatique
+L'éditeur analyse en temps réel la structure de votre algorithme pour garantir que chaque structure ouverte est correctement fermée :
+
+- **Paires de blocs vérifiées** :
+  - `Début` ➔ `Fin`
+  - `Si ... Alors` ➔ `Fin Si`
+  - `Tant Que ... Faire` ➔ `Fin Tant Que`
+  - `Répéter` ➔ `Jusqu'à`
+  - `Pour ... Faire` ➔ `Fin Pour`
+  - `Selon` ➔ `Fin Selon`
+- **Fermeture automatique à la frappe** : Lorsque vous tapez l'expression ouvrante et appuyez sur `Entrée`, l'éditeur vérifie si le bloc est déjà fermé. Si ce n'est pas le cas, il insère automatiquement l'expression fermante avec l'indentation adéquate et place le curseur à l'intérieur du bloc.
+- **Diagnostic en temps réel** : Si un bloc n'est pas fermé, l'éditeur le signale par un soulignement rouge et un message dans le panneau **Problèmes** (`Expression fermante manquante : 'Fin Si'`).
+- **Correction rapide (Quick Fix 💡)** : En cliquant sur l'ampoule ou avec le raccourci `Ctrl+.`, insérez instantanément l'expression fermante manquante en un clic.
+
+---
 
 ### 📋 Aperçu Visuel & Export (TDO / TDNT / Word / PDF)
 Ouvrez un panneau d'aperçu dynamique à côté de votre code via le raccourci **`Ctrl+Shift+V`** (ou **`Cmd+Shift+V`** sur Mac), ou en cliquant sur l'icône **Ouvrir l'aperçu** dans la barre de titre de l'éditeur.
