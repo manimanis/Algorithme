@@ -4,6 +4,40 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
+## [1.6.0] - 2026-11-03
+
+### Added
+- **Support complet de la syntaxe des Matrices (tableaux 2D)** :
+  - Déclaration dans le TDNT et TDO : `Tableau de N lignes * M colonnes <type>`, `Tableau [0..N, 0..M] de <type>`, `Matrice de N * M colonnes <type>`.
+  - Indexation et affectation bidimensionnelle : notation à virgule `M[i, j]` et notation chaînée `M[i][j]`.
+  - Coloration syntaxique des mots-clés dimensionnels : `lignes`, `colonnes`, `ligne`, `colonne`, `matrice`.
+  - Nouveaux snippets : `matrice_tdnt`, `matrice_tdo`, `parcours_matrice`.
+  - Exemple exécutable complet ajouté dans `exemples/matrice.alg`.
+
+- **Support complet de la syntaxe des Enregistrements** :
+  - Définition de structures d'enregistrements multi-champs dans le TDNT : `Type = Enregistrement ... Fin`.
+  - Déclaration directe dans le TDO : `variable : Enregistrement ... Fin` ou déclaration typée `t : Tableau de N Type`.
+  - Prise en charge de l'accès aux champs par point (`p.nom`, `t[i].age`), de la copie globale (`p2 ← p1`), de la lecture (`Lire(p.nom)`) et de l'écriture.
+  - Indentation automatique à la saisie de `Enregistrement` et désindentation sur `Fin` / `Fin Enregistrement`.
+  - Fermeture automatique du bloc `Enregistrement` lors de l'appui sur `Entrée`.
+  - Détection des blocs d'enregistrements non fermés (diagnostics) et Quick Fix (`Insérer 'Fin'`).
+  - Rendu visuel propre et fidèle dans l'aperçu et dans l'export Microsoft Word (`.doc`) : préservation des sauts de ligne et de l'indentation des champs au sein des tableaux TDNT et TDO.
+  - Nouveaux snippets : `enreg_tdnt`, `enreg_tdo`, `tab_enreg`.
+  - Exemple exécutable complet ajouté dans `exemples/enregistrement.alg`.
+
+- **Support complet de la syntaxe des Fichiers** :
+  - Déclaration des fichiers texte (`Fichier Texte`) et des fichiers typés (`Fichier de entier`, `Fichier de Eleve`, etc.).
+  - Coloration et reconnaissance des procédures et fonctions standard : `Ouvrir`, `Fermer`, `Ecrire`, `Ecrire_nl` / `Écrire_nl`, `Lire`, `Lire_ligne`, `Fin_fichier` / `FinFichier`.
+  - Prise en charge de tous les modes d'accès (`"r"`, `"w"`, `"a"`, `"rb"`, `"wb"`, `"ab"`).
+  - Nouveaux snippets : `fich_lire_texte`, `fich_ecrire_texte`, `fich_lire_data`, `fich_ecrire_data`.
+  - Exemple exécutable complet ajouté dans `exemples/fichier.alg`.
+
+- **Améliorations complémentaires de syntaxe et fonctions prédéfinies** :
+  - Prise en charge de l'opérateur de passage par référence `@` (`@M : Mat`).
+  - Prise en charge et coloration des fonctions prédéfinies : `abs`, `arrondi`, `exp`, `ln`, `log`, `graine`, `est_num`, `minus`.
+
+---
+
 ## [1.5.2] - 2026-11-03
 
 ### Fixed

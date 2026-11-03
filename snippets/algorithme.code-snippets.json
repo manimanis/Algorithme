@@ -52,7 +52,10 @@
     "description": "Boucle Tant Que"
   },
   "Répéter - Jusqu'à": {
-    "prefix": ["repeter", "répéter"],
+    "prefix": [
+      "repeter",
+      "répéter"
+    ],
     "body": [
       "Répéter",
       "  ${0:instructions}",
@@ -285,7 +288,7 @@
     ],
     "description": "Procedure de tri par insertion"
   },
-  "rechercher":{
+  "rechercher": {
     "prefix": "rechercher",
     "body": [
       "Fonction Rechercher(${4:v}: ${5:entier}, ${1:t}: ${2:Tab}, ${3:n}: entier):entier",
@@ -302,7 +305,7 @@
     ],
     "description": "Fonction de recherche"
   },
-  "verif":{
+  "verif": {
     "prefix": "verif",
     "body": [
       "Fonction Verif(${1:ch}: ${2:chaîne}):booleen",
@@ -317,5 +320,129 @@
       "Fin"
     ],
     "description": "Fonction de vérification"
+  },
+  "Enregistrement (TDNT)": {
+    "prefix": [
+      "enreg_tdnt",
+      "enregistrement_tdnt"
+    ],
+    "body": [
+      "${1:TypeEnreg} = Enregistrement",
+      "  ${2:champ1} : ${3:entier}",
+      "  ${4:champ2} : ${5:chaîne}",
+      "Fin"
+    ],
+    "description": "Déclaration d'un type Enregistrement dans le TDNT"
+  },
+  "Enregistrement direct (TDO)": {
+    "prefix": [
+      "enreg_tdo",
+      "enregistrement_tdo"
+    ],
+    "body": [
+      "${1:art} : Enregistrement",
+      "  ${2:champ1} : ${3:entier}",
+      "  ${4:champ2} : ${5:chaîne}",
+      "Fin"
+    ],
+    "description": "Déclaration directe d'un Enregistrement dans le TDO"
+  },
+  "Tableau d'enregistrements (TDNT)": {
+    "prefix": [
+      "tab_enreg",
+      "tableau_enregistrements"
+    ],
+    "body": [
+      "${1:Tab} = Tableau de ${2:50} ${3:TypeEnreg}"
+    ],
+    "description": "Déclaration d'un tableau d'enregistrements"
+  },
+  "Matrice (TDNT)": {
+    "prefix": [
+      "matrice_tdnt",
+      "mat_tdnt"
+    ],
+    "body": [
+      "${1:Mat} = Tableau de ${2:3} lignes * ${3:3} colonnes ${4:entier}"
+    ],
+    "description": "Déclaration d'un type Matrice (2D) dans le TDNT"
+  },
+  "Matrice (TDO)": {
+    "prefix": [
+      "matrice_tdo",
+      "mat_tdo"
+    ],
+    "body": [
+      "${1:M} : Tableau de ${2:3} lignes * ${3:3} colonnes ${4:entier}"
+    ],
+    "description": "Déclaration d'une variable Matrice (2D) dans le TDO"
+  },
+  "Parcours d'une Matrice": {
+    "prefix": [
+      "parcours_matrice",
+      "pour_matrice"
+    ],
+    "body": [
+      "Pour ${1:i} De 0 A ${2:nl - 1} Faire",
+      "  Pour ${3:j} De 0 A ${4:nc - 1} Faire",
+      "    ${5:M[i, j] ← ...}",
+      "  Fin Pour",
+      "Fin Pour"
+    ],
+    "description": "Parcours complet des cases d'une matrice avec deux boucles imbriquées"
+  },
+  "Fichier Texte (Lecture ligne par ligne)": {
+    "prefix": [
+      "fich_lire_texte",
+      "fichier_texte_lecture"
+    ],
+    "body": [
+      "Ouvrir(\"${1:fichier.txt}\", ${2:f}, \"r\")",
+      "Tant Que Non Fin_fichier(${2:f}) Faire",
+      "  Lire_ligne(${2:f}, ${3:ligne})",
+      "  ${4:// Traitement de la ligne}",
+      "Fin Tant Que",
+      "Fermer(${2:f})"
+    ],
+    "description": "Ouverture, lecture ligne par ligne et fermeture d'un fichier texte"
+  },
+  "Fichier Texte (Écriture)": {
+    "prefix": [
+      "fich_ecrire_texte",
+      "fichier_texte_ecriture"
+    ],
+    "body": [
+      "Ouvrir(\"${1:fichier.txt}\", ${2:f}, \"w\")",
+      "Ecrire_nl(${2:f}, ${3:ligne})",
+      "Fermer(${2:f})"
+    ],
+    "description": "Ouverture en écriture d'un fichier texte et ajout de ligne"
+  },
+  "Fichier Données Typé (Lecture)": {
+    "prefix": [
+      "fich_lire_data",
+      "fichier_donnees_lecture"
+    ],
+    "body": [
+      "Ouvrir(\"${1:donnees.dat}\", ${2:f}, \"rb\")",
+      "Tant Que Non Fin_fichier(${2:f}) Faire",
+      "  Lire(${2:f}, ${3:val})",
+      "  ${4:// Traitement}",
+      "Fin Tant Que",
+      "Fermer(${2:f})"
+    ],
+    "description": "Lecture séquentielle d'un fichier de données typé"
+  },
+  "Fichier Données Typé (Écriture)": {
+    "prefix": [
+      "fich_ecrire_data",
+      "fichier_donnees_ecriture"
+    ],
+    "body": [
+      "Ouvrir(\"${1:donnees.dat}\", ${2:f}, \"wb\")",
+      "Ecrire(${2:f}, ${3:val})",
+      "Fermer(${2:f})"
+    ],
+    "description": "Écriture dans un fichier de données typé"
   }
 }

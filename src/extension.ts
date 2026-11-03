@@ -229,8 +229,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(replaceDisposable);
 
   // --- Document Formatter (Format Document) ---
-  const openBlockRegex = /(?<=^|[^\p{L}\p{N}_])(début|debut|faire|alors|répéter|repeter|sinon)\s*$|^\s*selon\b/iu;
-  const closeBlockRegex = /^\s*([fF][iI][nN](\s*([sS][iI]|[pP][oO][uU][rR]|[tT][aA][nN][tT]\s*[qQ][uU][eE]|[sS][eE][lL][oO][nN]))?|[sS][iI][nN][oO][nN])\b|^\s*[jJ][uU][sS][qQ][uU]['’]?[aàAÀ]/iu;
+  const openBlockRegex = /(?<=^|[^\p{L}\p{N}_])(début|debut|faire|alors|répéter|repeter|sinon|enregistrement)\s*$|^\s*selon\b/iu;
+  const closeBlockRegex = /^\s*([fF][iI][nN](\s*([sS][iI]|[pP][oO][uU][rR]|[tT][aA][nN][tT]\s*[qQ][uU][eE]|[sS][eE][lL][oO][nN]|[eE][nN][rR][eE][gG][iI][sS][tT][rR][eE][mM][eE][nN][tT]))?|[sS][iI][nN][oO][nN])\b|^\s*[jJ][uU][sS][qQ][uU]['’]?[aàAÀ]/iu;
   const middleBlockRegex = /^\s*(sinon|autrement)\b/iu;
 
   const formatter = vscode.languages.registerDocumentFormattingEditProvider('algorithme', {
@@ -644,24 +644,73 @@ function parseAlgorithme(text: string): ContentItem[] {
           if (left.toLowerCase() === 'objet' && (right.toLowerCase().includes('type') || right.toLowerCase().includes('nature'))) {
             headers[0] = left;
             headers[1] = right;
+            i++;
+            continue;
           } else if (left.toLowerCase() === 'type' && (right.toLowerCase().includes('déf') || right.toLowerCase().includes('def') || right.toLowerCase().includes('description'))) {
             headers[0] = left;
             headers[1] = right;
+            i++;
+            continue;
+          } else if (/^enregistrement\b/i.test(right)) {
+            // Multi-line Enregistrement in TDO
+            let recordDef = right;
+            i++;
+            while (i < lines.length) {
+              const fLine = lines[i];
+              const fTrim = fLine.trim();
+              if (fTrim.length === 0) { i++; continue; }
+              if (/^fin(\s+enregistrement)?\b/i.test(fTrim)) {
+                recordDef += '\n' + fTrim;
+                i++;
+                break;
+              }
+              if (/^(TDNT|TDOG|TDOL|TDO|Algorithme|Procédure|Procedure|Fonction|Début|Debut)\b/i.test(fTrim)) {
+                break;
+              }
+              recordDef += '\n  ' + fTrim;
+              i++;
+            }
+            rows.push([left, recordDef]);
+            continue;
           } else {
             rows.push([left, right]);
+            i++;
+            continue;
           }
-          i++;
-          continue;
         }
 
-        // Equal separator for TDNT: Tab1 = Tableau de 50 entier
+        // Equal separator for TDNT: Tab1 = Tableau de 50 entier or Nom = Enregistrement
         if (rowTrim.includes('=')) {
           const eqIdx = rowTrim.indexOf('=');
           const left = rowTrim.substring(0, eqIdx).trim();
           const right = rowTrim.substring(eqIdx + 1).trim();
-          rows.push([left, right]);
-          i++;
-          continue;
+
+          if (/^enregistrement\b/i.test(right)) {
+            // Multi-line Enregistrement in TDNT
+            let recordDef = right;
+            i++;
+            while (i < lines.length) {
+              const fLine = lines[i];
+              const fTrim = fLine.trim();
+              if (fTrim.length === 0) { i++; continue; }
+              if (/^fin(\s+enregistrement)?\b/i.test(fTrim)) {
+                recordDef += '\n' + fTrim;
+                i++;
+                break;
+              }
+              if (/^(TDNT|TDOG|TDOL|TDO|Algorithme|Procédure|Procedure|Fonction|Début|Debut)\b/i.test(fTrim)) {
+                break;
+              }
+              recordDef += '\n  ' + fTrim;
+              i++;
+            }
+            rows.push([left, recordDef]);
+            continue;
+          } else {
+            rows.push([left, right]);
+            i++;
+            continue;
+          }
         }
 
         rows.push([rowTrim, '']);
@@ -698,16 +747,18 @@ const KEYWORDS_SET = new Set([
   'algorithme', 'début', 'debut', 'fin', 'si', 'alors', 'sinon', 'faire',
   'répéter', 'repeter', 'pour', 'de', 'pas',
   'procédure', 'procedure', 'fonction', 'tableau', 'selon', 'cas', 'autrement', 'retourner',
-  'et', 'ou', 'non', 'vrai', 'faux', 'div', 'mod'
+  'et', 'ou', 'non', 'vrai', 'faux', 'div', 'mod',
+  'enregistrement', 'enregistrements', 'fichier', 'fichiers', 'lignes', 'colonnes', 'ligne', 'colonne', 'type', 'var'
 ]);
 
 const TYPES_SET = new Set([
-  'entier', 'réel', 'reel', 'booléen', 'booleen', 'caractère', 'caractere', 'chaîne', 'chaine', 'matrice'
+  'entier', 'réel', 'reel', 'booléen', 'booleen', 'caractère', 'caractere', 'chaîne', 'chaine', 'matrice', 'enregistrement', 'fichier', 'tableau'
 ]);
 
 const FUNCTIONS_SET = new Set([
-  'lire', 'ecrire', 'écrire', 'alea', 'aléa', 'chr', 'ord', 'racine', 'pos',
-  'sous_chaine', 'effacer', 'long', 'ent', 'estnum', 'convch', 'valeur', 'majus', 'minus'
+  'lire', 'ecrire', 'écrire', 'ecrire_nl', 'écrire_nl', 'lire_ligne', 'ouvrir', 'fermer', 'fin_fichier', 'finfichier',
+  'alea', 'aléa', 'chr', 'ord', 'racine', 'pos', 'sous_chaine', 'souschaine', 'effacer', 'long', 'ent',
+  'estnum', 'est_num', 'convch', 'valeur', 'majus', 'minus', 'abs', 'arrondi', 'exp', 'ln', 'log', 'graine'
 ]);
 
 function highlightAlgorithmeLine(line: string): string {
@@ -718,7 +769,7 @@ function highlightAlgorithmeLine(line: string): string {
   const text = line.substring(indentLength);
 
   // Single-pass tokenizer
-  const tokenRegex = /(\/\/.*$)|(".*?")|(\b(?:fin\s+si|fin\s+tant\s+que|fin\s+pour|fin\s+selon|tant\s+que)\b)|((?<=^|[^\p{L}\p{N}_])(?:jusqu['’]à|jusqu['’]a|jusqua|jusqu_à)(?=[^\p{L}\p{N}_]|$))|((?<=[\s(])à(?=[\s)]|$))|([\p{L}_][\p{L}\p{N}_]*)|(\.\.|←|≤|≥|≠|∈)/giu;
+  const tokenRegex = /(\/\/.*$)|(".*?")|(\b(?:fin\s+si|fin\s+tant\s+que|fin\s+pour|fin\s+selon|fin\s+enregistrement|fichier\s+texte|tant\s+que)\b)|((?<=^|[^\p{L}\p{N}_])(?:jusqu['’]à|jusqu['’]a|jusqua|jusqu_à)(?=[^\p{L}\p{N}_]|$))|((?<=[\s(])à(?=[\s)]|$))|([\p{L}_][\p{L}\p{N}_]*)|(\.\.|←|≤|≥|≠|∈|@)/giu;
 
   let result = '';
   let lastIndex = 0;
@@ -773,7 +824,7 @@ function buildContentHtml(items: ContentItem[]): string {
       const t = item.data;
       let rowsHtml = '';
       for (const r of t.rows) {
-        rowsHtml += `<tr><td>${escapeHtml(r[0])}</td><td>${escapeHtml(r[1])}</td></tr>`;
+        rowsHtml += `<tr><td>${escapeHtml(r[0])}</td><td>${escapeHtml(r[1]).replace(/\n/g, '<br>').replace(/  /g, '&nbsp;&nbsp;')}</td></tr>`;
       }
       if (t.rows.length === 0) {
         rowsHtml = `<tr><td colspan="2" style="text-align:center;color:#888;font-style:italic;">Aucun élément déclaré</td></tr>`;

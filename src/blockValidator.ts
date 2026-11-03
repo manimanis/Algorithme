@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 export interface BlockOpening {
-  kind: 'debut' | 'si' | 'tantque' | 'pour' | 'repeter' | 'selon';
+  kind: 'debut' | 'si' | 'tantque' | 'pour' | 'repeter' | 'selon' | 'enregistrement';
   label: string;
   expectedClose: string;
   line: number;
@@ -38,6 +38,9 @@ export function getOpeningBlockFromLine(rawText: string): { kind: BlockOpening['
     return null;
   }
   if (/(?<=^|[^\p{L}\p{N}_])selon(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin\s+selon(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
+    return null;
+  }
+  if (/(?<=^|[^\p{L}\p{N}_])enregistrement(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin(\s+enregistrement)?(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
     return null;
   }
 
@@ -78,6 +81,11 @@ export function getOpeningBlockFromLine(rawText: string): { kind: BlockOpening['
     return { kind: 'selon', label: 'Selon', expectedClose: 'Fin Selon' };
   }
 
+  // 7. Enregistrement
+  if (/(?<=^|[^\p{L}\p{N}_])enregistrement\s*$/iu.test(code)) {
+    return { kind: 'enregistrement', label: 'Enregistrement', expectedClose: 'Fin' };
+  }
+
   return null;
 }
 
@@ -99,7 +107,7 @@ export function validateAlgorithmeBlocks(document: vscode.TextDocument): vscode.
   let inBlockComment = false;
   let inTableSection = false;
 
-  const tokenRegex = /(?<=^|[^\p{L}\p{N}_])(fin\s+si|fin\s+tant\s+que|fin\s+pour|fin\s+selon|jusqu['’]?[aà]|d[eé]but|sinon\s+si|si|alors|tant\s+que|pour|faire|r[eé]p[eé]ter|selon|fin)(?=[^\p{L}\p{N}_]|$)/giu;
+  const tokenRegex = /(?<=^|[^\p{L}\p{N}_])(fin\s+si|fin\s+tant\s+que|fin\s+pour|fin\s+selon|fin\s+enregistrement|jusqu['’]?[aà]|d[eé]but|sinon\s+si|si|alors|tant\s+que|pour|faire|r[eé]p[eé]ter|selon|enregistrement|fin)(?=[^\p{L}\p{N}_]|$)/giu;
 
   for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
     const rawLine = document.lineAt(lineIndex).text;
@@ -147,7 +155,7 @@ export function validateAlgorithmeBlocks(document: vscode.TextDocument): vscode.
     if (inTableSection) {
       if (/^(algorithme|proc[eé]dure|fonction)\b/i.test(trimmed)) {
         inTableSection = false;
-      } else {
+      } else if (!/\b(enregistrement|fin)\b/i.test(trimmed)) {
         continue;
       }
     }
@@ -312,6 +320,26 @@ export function validateAlgorithmeBlocks(document: vscode.TextDocument): vscode.
         continue;
       }
 
+      // In table section, ignore non-record tokens
+      if (inTableSection && lower !== 'enregistrement' && lower !== 'fin' && lower !== 'fin enregistrement') {
+        i++;
+        continue;
+      }
+
+      // 7. Enregistrement
+      if (lower === 'enregistrement') {
+        stack.push({
+          kind: 'enregistrement',
+          label: 'Enregistrement',
+          expectedClose: 'Fin',
+          line: lineIndex,
+          col: tok.index,
+          length: tok.word.length
+        });
+        i++;
+        continue;
+      }
+
       // Closing tokens
       if (lower === 'fin si') {
         matchClosing('si', 'Fin Si', lineIndex, tok);
@@ -330,6 +358,11 @@ export function validateAlgorithmeBlocks(document: vscode.TextDocument): vscode.
       }
       if (lower === 'fin selon') {
         matchClosing('selon', 'Fin Selon', lineIndex, tok);
+        i++;
+        continue;
+      }
+      if (lower === 'fin enregistrement') {
+        matchClosing('enregistrement', 'Fin', lineIndex, tok);
         i++;
         continue;
       }
@@ -356,7 +389,11 @@ export function validateAlgorithmeBlocks(document: vscode.TextDocument): vscode.
           continue;
         }
 
-        matchClosing('debut', 'Fin', lineIndex, tok);
+        if (stack.length > 0 && stack[stack.length - 1].kind === 'enregistrement') {
+          matchClosing('enregistrement', 'Fin', lineIndex, tok);
+        } else {
+          matchClosing('debut', 'Fin', lineIndex, tok);
+        }
         i++;
         continue;
       }

@@ -1,6 +1,6 @@
 # Extension pour l'Algorithme Tunisien
 
-[![Version](https://img.shields.io/badge/version-1.5.2-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-1.6.0-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.
@@ -53,6 +53,7 @@ L'éditeur analyse en temps réel la structure de votre algorithme pour garantir
   - `Répéter` ➔ `Jusqu'à`
   - `Pour ... Faire` ➔ `Fin Pour`
   - `Selon` ➔ `Fin Selon`
+  - `Enregistrement` ➔ `Fin`
 - **Fermeture automatique à la frappe** : Lorsque vous tapez l'expression ouvrante et appuyez sur `Entrée`, l'éditeur vérifie si le bloc est déjà fermé. Si ce n'est pas le cas, il insère automatiquement l'expression fermante avec l'indentation adéquate et place le curseur à l'intérieur du bloc.
 - **Diagnostic en temps réel** : Si un bloc n'est pas fermé, l'éditeur le signale par un soulignement rouge et un message dans le panneau **Problèmes** (`Expression fermante manquante : 'Fin Si'`).
 - **Correction rapide (Quick Fix 💡)** : En cliquant sur l'ampoule ou avec le raccourci `Ctrl+.`, insérez instantanément l'expression fermante manquante en un clic.
@@ -79,10 +80,10 @@ Ouvrez un panneau d'aperçu dynamique à côté de votre code via le raccourci *
 
 ### 🎨 Coloration Syntaxique Complète
 Coloration intelligente et fidèle aux normes pédagogiques tunisiennes :
-- **Mots-clés** : `Algorithme`, `Début`, `Fin`, `Si`, `Alors`, `Sinon`, `Fin Si`, `Tant Que`, `Faire`, `Fin Tant Que`, `Répéter`, `Jusqu'à`, `Pour`, `De`, `À`, `Pas`, `Fin Pour`, `Procédure`, `Fonction`, `Tableau`, `Retourner`, `Selon`, `Cas`, `Autrement`, `Fin Selon`
-- **Types de données** : `entier`, `réel`, `booléen`, `caractère`, `chaîne` / `chaine`, `matrice`
-- **Fonctions prédéfinies** : `Lire`, `Ecrire` / `Écrire`, `Aléa`, `Chr`, `Ord`, `Sous_chaine`, `Effacer`, `Long`, `Ent`, `Estnum`, `Convch`, `Valeur`, `Majus`, `Minus`, `Pos`, `Racine`
-- **Opérateurs** : `+`, `-`, `*`, `/`, `Div`, `Mod`, `..`, `>`, `<`, `≥`, `≤`, `=`, `≠`, `←`, `∈`, `Et`, `Ou`, `Non`
+- **Mots-clés** : `Algorithme`, `Début`, `Fin`, `Si`, `Alors`, `Sinon`, `Fin Si`, `Tant Que`, `Faire`, `Fin Tant Que`, `Répéter`, `Jusqu'à`, `Pour`, `De`, `À`, `Pas`, `Fin Pour`, `Procédure`, `Fonction`, `Tableau`, `Retourner`, `Selon`, `Cas`, `Autrement`, `Fin Selon`, `Enregistrement`, `Fin Enregistrement`, `Fichier`, `Fichier Texte`, `Lignes`, `Colonnes`
+- **Types de données** : `entier`, `réel`, `booléen`, `caractère`, `chaîne` / `chaine`, `matrice`, `enregistrement`, `fichier`, `tableau`
+- **Fonctions et procédures prédéfinies** : `Lire`, `Lire_ligne`, `Ecrire` / `Écrire`, `Ecrire_nl` / `Écrire_nl`, `Ouvrir`, `Fermer`, `Fin_fichier`, `Aléa`, `Chr`, `Ord`, `Sous_chaine`, `Effacer`, `Long`, `Ent`, `Estnum`, `Convch`, `Valeur`, `Majus`, `Minus`, `Pos`, `Racine`, `Abs`, `Arrondi`, `Exp`, `Ln`, `Graine`
+- **Opérateurs** : `+`, `-`, `*`, `/`, `Div`, `Mod`, `..`, `>`, `<`, `≥`, `≤`, `=`, `≠`, `←`, `∈`, `@` (passage par référence), `. ` (accès aux champs), `Et`, `Ou`, `Non`
 - **Littéraux** : Chaînes de caractères (`"..."`), nombres entiers et réels, booléens (`Vrai`, `Faux`)
 - **Commentaires** : Commentaires en ligne (`//`) et blocs multi-lignes (`/* ... */`)
 
@@ -114,6 +115,16 @@ Des dizaines de raccourcis d'insertion de code pour coder plus vite :
 | `affectation` | Insertion rapide de `←` |
 | `tdo` | Modèle de Tableau des Objets |
 | `tdnt` | Modèle de Tableau des Nouveaux Types |
+| `enreg_tdnt` | Déclaration d'un type Enregistrement dans le TDNT |
+| `enreg_tdo` | Déclaration directe d'un Enregistrement dans le TDO |
+| `tab_enreg` | Tableau d'enregistrements |
+| `matrice_tdnt` | Déclaration d'une Matrice dans le TDNT |
+| `matrice_tdo` | Déclaration d'une Matrice dans le TDO |
+| `parcours_matrice` | Parcours complet d'une matrice (deux boucles) |
+| `fich_lire_texte` | Lecture ligne par ligne d'un fichier texte |
+| `fich_ecrire_texte`| Écriture dans un fichier texte (`Ecrire_nl`) |
+| `fich_lire_data` | Lecture d'un fichier de données typé |
+| `fich_ecrire_data`| Écriture dans un fichier de données typé |
 
 #### Structures de Contrôle & Boucles
 | Préfixe | Description |
@@ -144,8 +155,8 @@ Des dizaines de raccourcis d'insertion de code pour coder plus vite :
 
 ### 📝 Formateur Automatique & Indentation Intelligente
 Indentation automatique et rigoureuse lors de la saisie au kilomètre et harmonisation des blocs de code :
-- **À la saisie (touche `Entrée`)** : l'augmentation d'indentation s'applique **uniquement** après une instruction ouvrante en fin de ligne (`Début`, `Alors`, `Faire`, `Répéter`, `Sinon` ou structure `Selon`). Les parenthèses et instructions simples telles que `Ecrire("...")` ou `Lire(...)` ne décalent jamais la ligne suivante.
-- **Désindentation immédiate** : les instructions fermantes (`Fin`, `Fin Si`, `Fin Pour`, `Fin Tant Que`, `Fin Selon`, `Jusqu'à`, `Sinon`) se réalignent automatiquement dès leur saisie.
+- **À la saisie (touche `Entrée`)** : l'augmentation d'indentation s'applique **uniquement** après une instruction ouvrante en fin de ligne (`Début`, `Alors`, `Faire`, `Répéter`, `Sinon` structure `Selon` ou `Enregistrement`). Les parenthèses et instructions simples telles que `Ecrire("...")` ou `Lire(...)` ne décalent jamais la ligne suivante.
+- **Désindentation immédiate** : les instructions fermantes (`Fin`, `Fin Si`, `Fin Pour`, `Fin Tant Que`, `Fin Selon`, `Fin Enregistrement`, `Jusqu'à`, `Sinon`) se réalignent automatiquement dès leur saisie.
 - **Formatage global** : raccourci `Shift+Alt+F` (Windows) ou `Shift+Option+F` (Mac) pour réindenter proprement tout le document.
 - Taille d'indentation configurable (par défaut : 2 espaces).
 

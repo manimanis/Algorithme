@@ -64,6 +64,14 @@
             },
             {
               "name": "keyword.control.algorithme",
+              "match": "(?i)\\bfin\\s+enregistrement\\b"
+            },
+            {
+              "name": "storage.type.algorithme",
+              "match": "(?i)\\bfichier\\s+texte\\b"
+            },
+            {
+              "name": "keyword.control.algorithme",
               "match": "(?i)\\btant\\s+que\\b"
             },
             {
@@ -75,12 +83,12 @@
         {
           "comment": "Single keywords (case-insensitive)",
           "name": "keyword.control.algorithme",
-          "match": "(?i)\\b(algorithme|debut|début|fin|si|alors|sinon|faire|répéter|repeter|pour|de|à|pas|procedure|procédure|fonction|tableau|et|ou|non|retourner|selon|cas|autrement)\\b"
+          "match": "(?i)\\b(algorithme|debut|début|fin|si|alors|sinon|faire|répéter|repeter|pour|de|à|pas|procedure|procédure|fonction|tableau|et|ou|non|retourner|selon|cas|autrement|enregistrement|enregistrements|fichier|fichiers|lignes|colonnes|ligne|colonne|type|var)\\b"
         },
         {
           "comment": "Data types (case-insensitive)",
           "name": "storage.type.algorithme",
-          "match": "(?i)\\b(entier|réel|reel|booléen|booleen|caractère|caractere|chaîne|chaine|matrice)\\b"
+          "match": "(?i)\\b(entier|réel|reel|booléen|booleen|caractère|caractere|chaîne|chaine|matrice|enregistrement|fichier|tableau)\\b"
         },
         {
           "comment": "Boolean constants (case-insensitive)",
@@ -91,10 +99,15 @@
     },
     "predefined-functions": {
       "name": "support.function.algorithme",
-      "match": "(?i)\\b(lire|ecrire|écrire|alea|aléa|chr|ord|racine|pos|sous_chaine|souschaine|effacer|long|ent|estnum|convch|valeur|majus)\\b"
+      "match": "(?i)\\b(lire|ecrire|écrire|ecrire_nl|écrire_nl|lire_ligne|ouvrir|fermer|fin_fichier|finfichier|alea|aléa|chr|ord|racine|pos|sous_chaine|souschaine|effacer|long|ent|estnum|est_num|convch|valeur|majus|minus|abs|arrondi|exp|ln|log|graine)\\b"
     },
     "operators": {
       "patterns": [
+        {
+          "comment": "Pass-by-reference operator",
+          "name": "keyword.operator.reference.algorithme",
+          "match": "@"
+        },
         {
           "comment": "Range operator",
           "name": "keyword.operator.range.algorithme",
