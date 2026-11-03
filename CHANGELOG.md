@@ -6,6 +6,17 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ## [1.5.2] - 2026-11-03
 
+### Fixed
+- **Correction majeure des règles d'indentation lors de la saisie** :
+  - Suppression des fausses détections d'indentation causées par les parenthèses (ex : `Ecrire("message")`, `Lire(x)`, appels de fonctions).
+  - L'indentation automatique à la frappe de `Entrée` s'applique désormais **uniquement** aux instructions fermées en fin de ligne : `Début`, `Alors`, `Faire`, `Répéter`, `Sinon` (et structure `Selon`).
+  - La désindentation s'applique fidèlement aux instructions : `Fin`, `Fin Si`, `Fin Pour`, `Fin Tant Que`, `Fin Selon`, `Jusqu'à` et `Sinon`.
+  - Harmonisation du formateur automatique de document (`Shift+Alt+F`) avec ces mêmes règles strictes.
+
+---
+
+## [1.5.1] - 2026-11-03
+
 ### Added
 - **Support étendu de la structure Selon** :
   - Support de la syntaxe sans le mot-clé `Faire` : `Selon v` ... `Fin Selon`.
@@ -19,6 +30,11 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 ## [1.5.0] - 2026-11-03
 
 ### Added
+- **Prise en charge complète de la structure Selon** :
+  - Coloration syntaxique de `Selon`, `Cas`, `Autrement`, `Fin Selon`.
+  - Fermeture automatique et vérification des blocs `Selon ... Faire` ➔ `Fin Selon`.
+  - Ajout du snippet intelligent `selon`.
+  - Prise en charge et exécution directe dans l'interpréteur `algo.exe` (cas multiples, expressions, blocs conditionnels imbriqués).
 - **Exécution directe et interactive des algorithmes** :
   - Intégration de l'interpréteur/compilateur d'algorithmes (`algo.exe`).
   - Lancement dans un **terminal interactif dédié** supportant la saisie au clavier (`Lire(...)`) et l'affichage des résultats (`Ecrire(...)`).

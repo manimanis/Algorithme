@@ -79,10 +79,10 @@ Ouvrez un panneau d'aperçu dynamique à côté de votre code via le raccourci *
 
 ### 🎨 Coloration Syntaxique Complète
 Coloration intelligente et fidèle aux normes pédagogiques tunisiennes :
-- **Mots-clés** : `Algorithme`, `Début`, `Fin`, `Si`, `Alors`, `Sinon`, `Fin Si`, `Tant Que`, `Faire`, `Fin Tant Que`, `Répéter`, `Jusqu'à`, `Pour`, `De`, `À`, `Pas`, `Fin Pour`, `Procédure`, `Fonction`, `Tableau`, `Retourner`, `Selon`, `Cas`, `Fin Selon`
+- **Mots-clés** : `Algorithme`, `Début`, `Fin`, `Si`, `Alors`, `Sinon`, `Fin Si`, `Tant Que`, `Faire`, `Fin Tant Que`, `Répéter`, `Jusqu'à`, `Pour`, `De`, `À`, `Pas`, `Fin Pour`, `Procédure`, `Fonction`, `Tableau`, `Retourner`, `Selon`, `Cas`, `Autrement`, `Fin Selon`
 - **Types de données** : `entier`, `réel`, `booléen`, `caractère`, `chaîne` / `chaine`, `matrice`
 - **Fonctions prédéfinies** : `Lire`, `Ecrire` / `Écrire`, `Aléa`, `Chr`, `Ord`, `Sous_chaine`, `Effacer`, `Long`, `Ent`, `Estnum`, `Convch`, `Valeur`, `Majus`, `Minus`, `Pos`, `Racine`
-- **Opérateurs** : `+`, `-`, `*`, `/`, `Div`, `Mod`, `>`, `<`, `≥`, `≤`, `=`, `≠`, `←`, `∈`, `Et`, `Ou`, `Non`
+- **Opérateurs** : `+`, `-`, `*`, `/`, `Div`, `Mod`, `..`, `>`, `<`, `≥`, `≤`, `=`, `≠`, `←`, `∈`, `Et`, `Ou`, `Non`
 - **Littéraux** : Chaînes de caractères (`"..."`), nombres entiers et réels, booléens (`Vrai`, `Faux`)
 - **Commentaires** : Commentaires en ligne (`//`) et blocs multi-lignes (`/* ... */`)
 
@@ -142,11 +142,11 @@ Des dizaines de raccourcis d'insertion de code pour coder plus vite :
 
 ---
 
-### 📝 Formateur Automatique de Document
-Indentation automatique et harmonisation des blocs de code :
-- Touche de raccourci : `Shift+Alt+F` (Windows) ou `Shift+Option+F` (Mac).
-- Les mots-clés ouvrants (`Début`, `Faire`, `Alors`, `Répéter`) incrémentent l'indentation.
-- Les mots-clés fermants (`Fin`, `Jusqu'à`, `Sinon`) ajustent l'alignement.
+### 📝 Formateur Automatique & Indentation Intelligente
+Indentation automatique et rigoureuse lors de la saisie au kilomètre et harmonisation des blocs de code :
+- **À la saisie (touche `Entrée`)** : l'augmentation d'indentation s'applique **uniquement** après une instruction ouvrante en fin de ligne (`Début`, `Alors`, `Faire`, `Répéter`, `Sinon` ou structure `Selon`). Les parenthèses et instructions simples telles que `Ecrire("...")` ou `Lire(...)` ne décalent jamais la ligne suivante.
+- **Désindentation immédiate** : les instructions fermantes (`Fin`, `Fin Si`, `Fin Pour`, `Fin Tant Que`, `Fin Selon`, `Jusqu'à`, `Sinon`) se réalignent automatiquement dès leur saisie.
+- **Formatage global** : raccourci `Shift+Alt+F` (Windows) ou `Shift+Option+F` (Mac) pour réindenter proprement tout le document.
 - Taille d'indentation configurable (par défaut : 2 espaces).
 
 ---

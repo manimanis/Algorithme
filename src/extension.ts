@@ -229,9 +229,9 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(replaceDisposable);
 
   // --- Document Formatter (Format Document) ---
-  const openBlockRegex = /(?<=^|[^\p{L}\p{N}_])(début|debut|faire|alors|répéter|repeter|selon)(?=[^\p{L}\p{N}_]|$)/iu;
-  const closeBlockRegex = /(?<=^|[^\p{L}\p{N}_])(fin|jusqu['’]à|jusqu['’]a|jusqua)(?=[^\p{L}\p{N}_]|$)/iu;
-  const middleBlockRegex = /^\s*(sinon|autrement)\b/i;
+  const openBlockRegex = /(?<=^|[^\p{L}\p{N}_])(début|debut|faire|alors|répéter|repeter|sinon)\s*$|^\s*selon\b/iu;
+  const closeBlockRegex = /^\s*([fF][iI][nN](\s*([sS][iI]|[pP][oO][uU][rR]|[tT][aA][nN][tT]\s*[qQ][uU][eE]|[sS][eE][lL][oO][nN]))?|[sS][iI][nN][oO][nN])\b|^\s*[jJ][uU][sS][qQ][uU]['’]?[aàAÀ]/iu;
+  const middleBlockRegex = /^\s*(sinon|autrement)\b/iu;
 
   const formatter = vscode.languages.registerDocumentFormattingEditProvider('algorithme', {
     provideDocumentFormattingEdits(document: vscode.TextDocument): vscode.TextEdit[] {
