@@ -1,6 +1,6 @@
 # Extension pour l'Algorithme Tunisien
 
-[![Version](https://img.shields.io/badge/version-1.5.0-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-1.5.1-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.
@@ -8,6 +8,25 @@ Une extension VS Code complète et moderne pour le langage **Algorithme** — le
 ---
 
 ## 🌟 Fonctionnalités Principales
+
+### 🔀 Structure à Choix Multiples (Selon)
+L'extension supporte la syntaxe complète de la structure `Selon` avec cas simples, listes de valeurs, intervalles et clause alternative :
+```algorithme
+Selon v
+  1, 2, 3 : Ecrire("traitement1")
+  4 .. 5 : Ecrire("traitement2")
+  6, 7, 8..9 : Ecrire("traitement3")
+  Sinon
+    Ecrire("traitement4")
+Fin Selon
+```
+- Prise en charge avec ou sans le mot-clé `Faire` (`Selon v` ou `Selon v Faire`).
+- Intervalles de valeurs avec l'opérateur `..` (`4 .. 5`, `8..9`).
+- Clause alternative `Sinon` ou `Autrement` (avec ou sans `:`).
+- Fermeture automatique du bloc à la frappe (`Fin Selon`) et vérification syntaxique.
+- Exécution directe et fidèle dans l'interpréteur `algo.exe`.
+
+---
 
 ### ▶️ Exécution Directe & Interactive (Interpréteur / Compilateur)
 Exécutez vos algorithmes en un clic directement au sein de VS Code grâce à l'intégration de l'interpréteur `algo.exe` :

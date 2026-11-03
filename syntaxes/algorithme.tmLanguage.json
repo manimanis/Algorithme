@@ -56,6 +56,14 @@
             },
             {
               "name": "keyword.control.algorithme",
+              "match": "(?i)\\bfin\\s+pour\\b"
+            },
+            {
+              "name": "keyword.control.algorithme",
+              "match": "(?i)\\bfin\\s+selon\\b"
+            },
+            {
+              "name": "keyword.control.algorithme",
               "match": "(?i)\\btant\\s+que\\b"
             },
             {
@@ -67,7 +75,7 @@
         {
           "comment": "Single keywords (case-insensitive)",
           "name": "keyword.control.algorithme",
-          "match": "(?i)\\b(algorithme|debut|début|fin|si|alors|sinon|faire|répéter|repeter|pour|de|à|pas|procedure|procédure|fonction|tableau|et|ou|non|retourner)\\b"
+          "match": "(?i)\\b(algorithme|debut|début|fin|si|alors|sinon|faire|répéter|repeter|pour|de|à|pas|procedure|procédure|fonction|tableau|et|ou|non|retourner|selon|cas|autrement)\\b"
         },
         {
           "comment": "Data types (case-insensitive)",
@@ -87,6 +95,11 @@
     },
     "operators": {
       "patterns": [
+        {
+          "comment": "Range operator",
+          "name": "keyword.operator.range.algorithme",
+          "match": "\\.\\."
+        },
         {
           "comment": "Arithmetic operators (blue)",
           "name": "keyword.operator.arithmetic.algorithme",

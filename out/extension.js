@@ -245,9 +245,9 @@ function activate(context) {
     });
     context.subscriptions.push(replaceDisposable);
     // --- Document Formatter (Format Document) ---
-    const openBlockRegex = /(?<=^|[^\p{L}\p{N}_])(début|debut|faire|alors|répéter|repeter)(?=[^\p{L}\p{N}_]|$)/iu;
+    const openBlockRegex = /(?<=^|[^\p{L}\p{N}_])(début|debut|faire|alors|répéter|repeter|selon)(?=[^\p{L}\p{N}_]|$)/iu;
     const closeBlockRegex = /(?<=^|[^\p{L}\p{N}_])(fin|jusqu['’]à|jusqu['’]a|jusqua)(?=[^\p{L}\p{N}_]|$)/iu;
-    const middleBlockRegex = /^\s*(sinon)\b/i;
+    const middleBlockRegex = /^\s*(sinon|autrement)\b/i;
     const formatter = vscode.languages.registerDocumentFormattingEditProvider('algorithme', {
         provideDocumentFormattingEdits(document) {
             const edits = [];
@@ -648,7 +648,7 @@ function escapeHtml(str) {
 const KEYWORDS_SET = new Set([
     'algorithme', 'début', 'debut', 'fin', 'si', 'alors', 'sinon', 'faire',
     'répéter', 'repeter', 'pour', 'de', 'pas',
-    'procédure', 'procedure', 'fonction', 'tableau', 'selon', 'cas', 'retourner',
+    'procédure', 'procedure', 'fonction', 'tableau', 'selon', 'cas', 'autrement', 'retourner',
     'et', 'ou', 'non', 'vrai', 'faux', 'div', 'mod'
 ]);
 const TYPES_SET = new Set([
@@ -664,7 +664,7 @@ function highlightAlgorithmeLine(line) {
     const indentHtml = '&nbsp;'.repeat(indentLength);
     const text = line.substring(indentLength);
     // Single-pass tokenizer
-    const tokenRegex = /(\/\/.*$)|(".*?")|(\b(?:fin\s+si|fin\s+tant\s+que|fin\s+pour|fin\s+selon|tant\s+que)\b)|((?<=^|[^\p{L}\p{N}_])(?:jusqu['’]à|jusqu['’]a|jusqua|jusqu_à)(?=[^\p{L}\p{N}_]|$))|((?<=[\s(])à(?=[\s)]|$))|([\p{L}_][\p{L}\p{N}_]*)|(←|≤|≥|≠|∈)/giu;
+    const tokenRegex = /(\/\/.*$)|(".*?")|(\b(?:fin\s+si|fin\s+tant\s+que|fin\s+pour|fin\s+selon|tant\s+que)\b)|((?<=^|[^\p{L}\p{N}_])(?:jusqu['’]à|jusqu['’]a|jusqua|jusqu_à)(?=[^\p{L}\p{N}_]|$))|((?<=[\s(])à(?=[\s)]|$))|([\p{L}_][\p{L}\p{N}_]*)|(\.\.|←|≤|≥|≠|∈)/giu;
     let result = '';
     let lastIndex = 0;
     let match;

@@ -78,6 +78,17 @@
     ],
     "description": "Boucle Pour"
   },
+  "Selon": {
+    "prefix": "selon",
+    "body": [
+      "Selon ${1:variable} Faire",
+      "  ${2:valeur1}: ${3:instructions}",
+      "  ${4:valeur2}: ${5:instructions}",
+      "  ${6:autrement}: ${7:instructions}",
+      "Fin Selon"
+    ],
+    "description": "Structure conditionnelle Selon...Faire...Fin Selon"
+  },
   "Procédure": {
     "prefix": "procedure",
     "body": [

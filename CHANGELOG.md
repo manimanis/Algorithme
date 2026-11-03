@@ -4,6 +4,18 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
+## [1.5.1] - 2026-11-03
+
+### Added
+- **Support étendu de la structure Selon** :
+  - Support de la syntaxe sans le mot-clé `Faire` : `Selon v` ... `Fin Selon`.
+  - Prise en charge des **intervalles de valeurs** avec l'opérateur `..` (ex : `4 .. 5`, `8..9`, `6, 7, 8..9`).
+  - Prise en charge de la clause alternative `Sinon` ou `Autrement` (avec ou sans deux-points `:`).
+  - Coloration syntaxique de l'opérateur d'intervalle `..`.
+  - Exécution complète et vérifiée dans le compilateur/interpréteur `algo.exe`.
+
+---
+
 ## [1.5.0] - 2026-11-03
 
 ### Added

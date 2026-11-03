@@ -37,6 +37,9 @@ export function getOpeningBlockFromLine(rawText: string): { kind: BlockOpening['
   if (/(?<=^|[^\p{L}\p{N}_])(r[eé]p[eé]ter)(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])jusqu['’]?[aà](?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
     return null;
   }
+  if (/(?<=^|[^\p{L}\p{N}_])selon(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin\s+selon(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
+    return null;
+  }
 
   // 1. Début
   if (/(?<=^|[^\p{L}\p{N}_])(d[eé]but)(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
@@ -67,8 +70,11 @@ export function getOpeningBlockFromLine(rawText: string): { kind: BlockOpening['
     return { kind: 'repeter', label: 'Répéter', expectedClose: "Jusqu'à " };
   }
 
-  // 6. Selon
-  if (/(?<=^|[^\p{L}\p{N}_])selon(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
+  // 6. Selon ... Faire / Selon
+  if (/(?<=^|[^\\p{L}\\p{N}_])selon(?=[^\\p{L}\\p{N}_]|$).*?(?<=^|[^\\p{L}\\p{N}_])faire(?=[^\\p{L}\\p{N}_]|$)/iu.test(code)) {
+    return { kind: 'selon', label: 'Selon ... Faire', expectedClose: 'Fin Selon' };
+  }
+  if (/(?<=^|[^\\p{L}\\p{N}_])selon(?=[^\\p{L}\\p{N}_]|$)/iu.test(code)) {
     return { kind: 'selon', label: 'Selon', expectedClose: 'Fin Selon' };
   }
 
