@@ -4,9 +4,17 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
-## [1.3.3] - 2026-10-31
+## [1.5.0] - 2026-11-03
 
 ### Added
+- **Exécution directe et interactive des algorithmes** :
+  - Intégration de l'interpréteur/compilateur d'algorithmes (`algo.exe`).
+  - Lancement dans un **terminal interactif dédié** supportant la saisie au clavier (`Lire(...)`) et l'affichage des résultats (`Ecrire(...)`).
+  - Bouton d'action rapide ▶ **Exécuter** dans la barre de titre de l'éditeur (`editor/title`).
+  - Raccourci clavier dédié **`F5`** pour exécuter instantanément le fichier algorithme actif.
+  - Commandes accessibles via le menu contextuel de l'éditeur et de l'explorateur de fichiers.
+  - Sauvegarde automatique du fichier `.alg` avant chaque exécution.
+  - Paramètre de configuration `algorithme.interpreterPath` avec détection intelligente et boîte de sélection si l'exécutable est déplacé ou introuvable.
 - **Vérification automatique de l'existence des expressions fermantes** (Diagnostics / Problèmes) :
   - `Début` ➔ `Fin`
   - `Si ... Alors` ➔ `Fin Si`

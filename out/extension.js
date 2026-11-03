@@ -397,6 +397,80 @@ function activate(context) {
         updatePreview(previewPanel, editor.document);
     });
     context.subscriptions.push(previewCommand);
+    // --- Execution Command (Lancement de l'interpréteur algo.exe) ---
+    const runCommand = vscode.commands.registerCommand('algorithme.run', async (fileUri) => {
+        let document;
+        if (fileUri && fileUri.fsPath) {
+            document = await vscode.workspace.openTextDocument(fileUri);
+        }
+        else if (vscode.window.activeTextEditor) {
+            document = vscode.window.activeTextEditor.document;
+        }
+        if (!document) {
+            vscode.window.showWarningMessage("Veuillez ouvrir ou sélectionner un fichier d'algorithme (.alg) à exécuter.");
+            return;
+        }
+        if (document.languageId !== 'algorithme' && !/\.(alg|algo|algorithme)$/i.test(document.fileName)) {
+            vscode.window.showWarningMessage("Le fichier sélectionné n'est pas un algorithme (.alg, .algo, .algorithme).");
+            return;
+        }
+        if (document.isDirty) {
+            await document.save();
+        }
+        const config = vscode.workspace.getConfiguration('algorithme');
+        let interpreterPath = config.get('interpreterPath');
+        if (!interpreterPath || interpreterPath.trim() === '') {
+            interpreterPath = 'C:\\xampp-school\\htdocs\\MesProjets\\AlgorithmCompiler\\algo.exe';
+        }
+        if (!fs.existsSync(interpreterPath)) {
+            const chooseAction = "Sélectionner algo.exe...";
+            const selected = await vscode.window.showErrorMessage(`L'interpréteur d'algorithmes est introuvable à l'emplacement configuré : ${interpreterPath}`, chooseAction);
+            if (selected === chooseAction) {
+                const picked = await vscode.window.showOpenDialog({
+                    canSelectMany: false,
+                    openLabel: "Sélectionner algo.exe",
+                    filters: { 'Exécutables': ['exe', 'bat', 'cmd', '*'] }
+                });
+                if (picked && picked[0]) {
+                    interpreterPath = picked[0].fsPath;
+                    await config.update('interpreterPath', interpreterPath, vscode.ConfigurationTarget.Global);
+                    vscode.window.showInformationMessage(`Chemin de l'interpréteur mis à jour : ${interpreterPath}`);
+                }
+                else {
+                    return;
+                }
+            }
+            else {
+                return;
+            }
+        }
+        const filePath = document.fileName;
+        const workingDir = path.dirname(filePath);
+        let terminal = vscode.window.terminals.find(t => t.name === 'Algorithme');
+        if (!terminal) {
+            terminal = vscode.window.createTerminal({
+                name: 'Algorithme',
+                cwd: workingDir
+            });
+        }
+        terminal.show();
+        const shell = (vscode.env.shell || '').toLowerCase();
+        let runCommandStr;
+        if (shell.includes('powershell') || shell.includes('pwsh')) {
+            runCommandStr = `& "${interpreterPath}" "${filePath}"`;
+        }
+        else if (shell.includes('bash') || shell.includes('sh') || shell.includes('zsh')) {
+            const escapedExe = interpreterPath.replace(/\\/g, '/');
+            const escapedFile = filePath.replace(/\\/g, '/');
+            runCommandStr = `"${escapedExe}" "${escapedFile}"`;
+        }
+        else {
+            // cmd.exe ou autre
+            runCommandStr = `"${interpreterPath}" "${filePath}"`;
+        }
+        terminal.sendText(runCommandStr);
+    });
+    context.subscriptions.push(runCommand);
     // Live update preview on edits
     const docChangeDisposable = vscode.workspace.onDidChangeTextDocument((e) => {
         if (previewPanel && currentPreviewDocument && e.document.uri.toString() === currentPreviewDocument.uri.toString()) {

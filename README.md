@@ -1,6 +1,6 @@
 # Extension pour l'Algorithme Tunisien
 
-[![Version](https://img.shields.io/badge/version-1.3.3-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-1.5.0-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.
@@ -8,6 +8,21 @@ Une extension VS Code complète et moderne pour le langage **Algorithme** — le
 ---
 
 ## 🌟 Fonctionnalités Principales
+
+### ▶️ Exécution Directe & Interactive (Interpréteur / Compilateur)
+Exécutez vos algorithmes en un clic directement au sein de VS Code grâce à l'intégration de l'interpréteur `algo.exe` :
+- **Lancement rapide** :
+  - Cliquez sur le bouton ▶ **Exécuter** dans la barre d'onglets de l'éditeur.
+  - Ou appuyez sur la touche **`F5`**.
+  - Ou faites un clic droit dans l'éditeur ou sur un fichier `.alg` dans l'explorateur : *« Algorithme : Exécuter l'algorithme »*.
+- **Terminal interactif dédié** :
+  - Ouvre une console dédiée `Algorithme` dans le répertoire du fichier en cours d'exécution.
+  - Prise en charge complète des saisies interactives au clavier (`Lire(...)`) et de l'affichage en temps réel des résultats (`Ecrire(...)`).
+  - Compatible avec PowerShell, CMD (Invite de commandes) et Bash/Zsh.
+- **Sauvegarde automatique** : Le document est automatiquement sauvegardé avant chaque exécution pour garantir la prise en compte des dernières modifications.
+- **Chemin configurable** : Définissez l'emplacement de `algo.exe` via le paramètre `algorithme.interpreterPath`. Si l'exécutable est déplacé ou introuvable, l'extension vous propose automatiquement de le localiser via un sélecteur de fichier et enregistre votre choix.
+
+---
 
 ### 🛡️ Vérification des Blocs & Fermeture Automatique
 L'éditeur analyse en temps réel la structure de votre algorithme pour garantir que chaque structure ouverte est correctement fermée :
@@ -151,6 +166,27 @@ n, i, s : entier
 ```
 
 Appuyez sur `Ctrl+Shift+V` pour afficher l'aperçu avec le tableau TDO formaté, puis cliquez sur **📋 Copier pour Word** ou **📄 Exporter .doc** pour intégrer votre travail directement dans un document Word ou un sujet d'examen !
+
+---
+
+## ⌨️ Raccourcis Clavier
+
+| Raccourci | macOS | Action |
+|-----------|-------|--------|
+| **`F5`** | **`F5`** | Exécuter l'algorithme dans le terminal interactif |
+| **`Ctrl+Shift+V`** | **`Cmd+Shift+V`** | Ouvrir / afficher le volet d'aperçu dynamique |
+| **`Shift+Alt+F`** | **`Shift+Option+F`** | Formater et indenter le document |
+| **`Ctrl+.`** | **`Cmd+.`** | Actions rapides (Quick Fix / fermer un bloc manquant) |
+
+---
+
+## ⚙️ Configuration
+
+Vous pouvez personnaliser l'extension dans les paramètres de VS Code (`Ctrl+,` puis recherchez **Algorithme**) :
+
+| Paramètre | Type | Valeur par défaut | Description |
+|-----------|------|-------------------|-------------|
+| `algorithme.interpreterPath` | `string` | `C:\xampp-school\htdocs\MesProjets\AlgorithmCompiler\algo.exe` | Chemin absolu vers l'exécutable de l'interpréteur / compilateur d'algorithmes |
 
 ---
 
