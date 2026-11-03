@@ -4,7 +4,7 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
-## [1.6.0] - 2026-11-03
+## [1.6.1] - 2026-11-03
 
 ### Added
 - **Support complet de la syntaxe des Matrices (tableaux 2D)** :
