@@ -4,7 +4,7 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
-## [1.5.1] - 2026-11-03
+## [1.5.2] - 2026-11-03
 
 ### Added
 - **Support étendu de la structure Selon** :

@@ -1208,7 +1208,7 @@ function generateHtml(title: string, contentHtml: string, nonce: string, cspSour
 
             clone.querySelectorAll('.code-container').forEach(el => {
                 el.style.fontFamily = "Consolas, 'Courier New', monospace";
-                el.style.fontSize = '11pt';
+                el.style.fontSize = '12pt';
                 el.style.lineHeight = '1.45';
                 el.style.backgroundColor = '#ffffff';
                 el.style.border = 'none';
@@ -1242,7 +1242,7 @@ function generateHtml(title: string, contentHtml: string, nonce: string, cspSour
                     cell.style.border = '1.5pt solid black';
                     cell.style.padding = '0.1cm';
                     cell.style.margin = '0pt';
-                    cell.style.fontSize = '11pt';
+                    cell.style.fontSize = '12pt';
                     cell.style.fontFamily = "'Segoe UI', Arial, sans-serif";
                     cell.style.setProperty('mso-para-margin', '0pt');
                     cell.style.setProperty('mso-para-margin-top', '0pt');
