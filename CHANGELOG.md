@@ -4,6 +4,29 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
+## [1.7.0] - 2026-11-04
+
+### Added
+- **Support des commentaires multi-lignes (`/* ... */`)** :
+  - Coloration syntaxique complète dans le fichier TextMate grammar pour les blocs de commentaires sur plusieurs lignes.
+  - Respect de l'indentation et de l'état des commentaires multi-lignes dans le formateur de document (`Shift+Alt+F`).
+  - Prise en charge du style dans le volet d'aperçu dynamique (`Ctrl+Shift+V`) et lors de l'export Word (`.doc`).
+  - Snippet d'insertion rapide : `comment` / `commentaire`.
+
+- **Support de `Ecrire(message, sep=" ", fin="\n")`** :
+  - Coloration dédiée des paramètres nommés `sep` (séparateur entre valeurs) et `fin` (caractère de terminaison).
+  - Prise en charge des valeurs par défaut : espace `" "` pour `sep` et retour à la ligne `"\n"` pour `fin`.
+  - Nouveaux snippets : `ecrire_sep_fin`, `ecrire_sep`, `ecrire_fin`.
+  - Exécution conforme et vérifiée avec l'interpréteur `algo.exe`.
+
+- **Autocomplétion intelligente des sous-programmes (Fonctions & Procédures)** :
+  - Lors de la saisie d'un sous-programme, l'éditeur propose automatiquement ses paramètres par défaut sous forme de tabstops éditables (`Tab` pour naviguer).
+  - Prise en charge de toutes les fonctions et procédures prédéfinies (`Ecrire`, `Lire`, `Ouvrir`, `Fermer`, `Sous_chaine`, `Pos`, `Convch`, `Valeur`, `Alea`, etc.).
+  - Analyse dynamique en temps réel du document courant : détection de toutes les fonctions et procédures personnalisées définies par l'utilisateur avec extraction intelligente de leurs paramètres typés ou par référence (`@`).
+  - Info-bulles d'aide aux signatures (*Signature Help*) : affichage en direct de la documentation et du paramètre actif dès la frappe de `(` ou d'une virgule `,`.
+
+---
+
 ## [1.6.1] - 2026-11-03
 
 ### Added

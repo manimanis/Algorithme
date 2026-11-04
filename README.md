@@ -4,7 +4,7 @@
   <img src="icon.png" width="128" height="128" alt="Logo Algorithme Tunisien" />
 </p>
 
-[![Version](https://img.shields.io/badge/version-1.6.1-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-1.7.0-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.
@@ -145,6 +145,10 @@ Des dizaines de raccourcis d'insertion de code pour coder plus vite :
 #### Sous-programmes & Algorithmes Classiques
 | Préfixe | Description |
 |---------|-------------|
+| `ecrire_sep` | `Ecrire` avec séparateur `sep` personnalisé |
+| `ecrire_fin` | `Ecrire` avec caractère de fin `fin` personnalisé |
+| `ecrire_sep_fin` | `Ecrire` avec séparateur et fin personnalisés |
+| `comment` | Bloc de commentaire multi-lignes `/* ... */` |
 | `procedure` | Définition d'une procédure |
 | `fonction` | Définition d'une fonction avec `Retourner` |
 | `saisir` | Procédure de saisie contrôlée |

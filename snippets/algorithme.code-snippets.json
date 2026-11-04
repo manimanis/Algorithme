@@ -444,5 +444,47 @@
       "Fermer(${2:f})"
     ],
     "description": "Écriture dans un fichier de données typé"
+  },
+  "Ecrire avec separateur et fin": {
+    "prefix": [
+      "ecrire_sep_fin",
+      "ecrirefull"
+    ],
+    "body": [
+      "Ecrire(${1:message}, sep=\"${2: }\", fin=\"${3:\\n}\")"
+    ],
+    "description": "Ecrire avec séparateur personnalisé (sep) et caractère de fin (fin)"
+  },
+  "Ecrire avec separateur": {
+    "prefix": [
+      "ecrire_sep",
+      "ecrireseparateur"
+    ],
+    "body": [
+      "Ecrire(${1:message}, sep=\"${2: }\")"
+    ],
+    "description": "Ecrire avec séparateur personnalisé entre les paramètres (défaut : espace)"
+  },
+  "Ecrire avec fin": {
+    "prefix": [
+      "ecrire_fin"
+    ],
+    "body": [
+      "Ecrire(${1:message}, fin=\"${2:\\n}\")"
+    ],
+    "description": "Ecrire avec caractère de terminaison personnalisé (défaut : retour à la ligne)"
+  },
+  "Commentaire multi-lignes": {
+    "prefix": [
+      "comment",
+      "commentaire",
+      "rem"
+    ],
+    "body": [
+      "/*",
+      " * ${1:description}",
+      " */"
+    ],
+    "description": "Commentaire multi-lignes /* ... */"
   }
 }

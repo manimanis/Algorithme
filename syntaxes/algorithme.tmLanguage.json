@@ -10,6 +10,9 @@
       "include": "#strings"
     },
     {
+      "include": "#parameters"
+    },
+    {
       "include": "#keywords"
     },
     {
@@ -27,8 +30,25 @@
   ],
   "repository": {
     "comments": {
-      "name": "comment.line.double-slash.algorithme",
-      "match": "\\/\\/.*$"
+      "patterns": [
+        {
+          "name": "comment.block.algorithme",
+          "begin": "\\/\\*",
+          "end": "\\*\\/"
+        },
+        {
+          "name": "comment.line.double-slash.algorithme",
+          "match": "\\/\\/.*$"
+        }
+      ]
+    },
+    "parameters": {
+      "patterns": [
+        {
+          "name": "variable.parameter.algorithme",
+          "match": "(?i)\\b(sep|fin)(?=\\s*=)"
+        }
+      ]
     },
     "strings": {
       "name": "string.quoted.double.algorithme",

@@ -9,6 +9,10 @@ import {
   isBlockUnclosedFromLine,
   BlockQuickFixProvider
 } from './blockValidator';
+import {
+  SubprogramCompletionProvider,
+  SubprogramSignatureHelpProvider
+} from './subprogramCompletion';
 
 let isProcessing = false;
 let previewPanel: vscode.WebviewPanel | undefined = undefined;
@@ -69,6 +73,24 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerCodeActionsProvider('algorithme', new BlockQuickFixProvider(), {
       providedCodeActionKinds: BlockQuickFixProvider.providedCodeActionKinds
     })
+  );
+
+  // Register Subprogram Completion Provider (Autocomplétion des fonctions & procédures avec paramètres par défaut)
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(
+      'algorithme',
+      new SubprogramCompletionProvider(),
+      '(', ' '
+    )
+  );
+
+  // Register Subprogram Signature Help Provider (Info-bulles des paramètres lors de la frappe de '(' ou ',')
+  context.subscriptions.push(
+    vscode.languages.registerSignatureHelpProvider(
+      'algorithme',
+      new SubprogramSignatureHelpProvider(),
+      '(', ','
+    )
   );
 
   // --- Auto-replacement on type & Auto-closing of blocks ---
@@ -238,6 +260,7 @@ export function activate(context: vscode.ExtensionContext) {
       const edits: vscode.TextEdit[] = [];
       const indentSize = 2;
       let indentLevel = 0;
+      let inBlockComment = false;
 
       for (let i = 0; i < document.lineCount; i++) {
         const line = document.lineAt(i);
@@ -251,7 +274,34 @@ export function activate(context: vscode.ExtensionContext) {
           continue;
         }
 
-        if (trimmed.startsWith('//') || trimmed.startsWith('/*')) {
+        // Handle inside multi-line comment block /* ... */
+        if (inBlockComment) {
+          const endIdx = trimmed.indexOf('*/');
+          const indent = ' '.repeat(indentLevel * indentSize);
+          const newText = indent + trimmed;
+          if (newText !== text) {
+            edits.push(vscode.TextEdit.replace(line.range, newText));
+          }
+          if (endIdx !== -1) {
+            inBlockComment = false;
+          }
+          continue;
+        }
+
+        if (trimmed.startsWith('//')) {
+          const indent = ' '.repeat(indentLevel * indentSize);
+          const newText = indent + trimmed;
+          if (newText !== text) {
+            edits.push(vscode.TextEdit.replace(line.range, newText));
+          }
+          continue;
+        }
+
+        if (trimmed.startsWith('/*')) {
+          const endIdx = trimmed.indexOf('*/', 2);
+          if (endIdx === -1) {
+            inBlockComment = true;
+          }
           const indent = ' '.repeat(indentLevel * indentSize);
           const newText = indent + trimmed;
           if (newText !== text) {
@@ -781,12 +831,14 @@ function highlightAlgorithmeLine(line: string): string {
     }
     lastIndex = tokenRegex.lastIndex;
 
-    const [, comment, str, multiKw, jusqua, prepA, word, op] = match;
+    const [, comment, str, namedParam, multiKw, jusqua, prepA, word, op] = match;
 
     if (comment !== undefined) {
       result += `<span class="comment" style="color:#008000;font-style:italic;"><font color="#008000"><i>${escapeHtml(comment)}</i></font></span>`;
     } else if (str !== undefined) {
       result += `<span class="string" style="color:#a31515;"><font color="#a31515">${escapeHtml(str)}</font></span>`;
+    } else if (namedParam !== undefined) {
+      result += `<span class="parameter" style="color:#001080;font-style:italic;"><font color="#001080"><i>${escapeHtml(namedParam)}</i></font></span>`;
     } else if (multiKw !== undefined) {
       result += `<span class="keyword" style="color:#0000ff;font-weight:bold;"><font color="#0000ff"><b>${escapeHtml(multiKw)}</b></font></span>`;
     } else if (jusqua !== undefined) {
@@ -846,7 +898,26 @@ function buildContentHtml(items: ContentItem[]): string {
                 </table>
             </div>`;
     } else {
-      const formattedLines = item.lines.map(highlightAlgorithmeLine).join('<br>');
+      let inComment = false;
+      const formattedLines = item.lines.map(line => {
+        const trimmed = line.trim();
+        if (inComment) {
+          const endIdx = line.indexOf('*/');
+          if (endIdx !== -1) {
+            inComment = false;
+            const commentPart = line.substring(0, endIdx + 2);
+            const rest = line.substring(endIdx + 2);
+            return `<span class="comment" style="color:#008000;font-style:italic;"><font color="#008000"><i>${escapeHtml(commentPart)}</i></font></span>` + (rest ? highlightAlgorithmeLine(rest) : '');
+          } else {
+            return `<span class="comment" style="color:#008000;font-style:italic;"><font color="#008000"><i>${escapeHtml(line)}</i></font></span>`;
+          }
+        }
+        if (trimmed.startsWith('/*') && !line.includes('*/')) {
+          inComment = true;
+          return `<span class="comment" style="color:#008000;font-style:italic;"><font color="#008000"><i>${escapeHtml(line)}</i></font></span>`;
+        }
+        return highlightAlgorithmeLine(line);
+      }).join('<br>');
       contentHtml += `
             <div class="code-container">${formattedLines}</div>`;
     }
