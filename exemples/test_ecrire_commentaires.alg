@@ -7,7 +7,6 @@ Fin
 
 TDOL
 Objet : Type/Nature
-note1, note2 : Réel
 
 Algorithme TestEcrireEtCommentaires
 Début

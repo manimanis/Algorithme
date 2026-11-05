@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import { spawn } from 'child_process';
+import { spawn, execFile } from 'child_process';
 import {
   validateAlgorithmeBlocks,
   getOpeningBlockFromLine,
@@ -454,6 +454,39 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(previewCommand);
 
+  // Helper to obtain and validate the compiler/interpreter executable path
+  async function getInterpreterPath(): Promise<string | undefined> {
+    const config = vscode.workspace.getConfiguration('algorithme');
+    let interpreterPath = config.get<string>('interpreterPath');
+    if (!interpreterPath || interpreterPath.trim() === '') {
+      interpreterPath = 'C:\\xampp-school\\htdocs\\MesProjets\\AlgorithmCompiler\\algo.exe';
+    }
+
+    if (!fs.existsSync(interpreterPath)) {
+      const chooseAction = "Sélectionner algo.exe...";
+      const selected = await vscode.window.showErrorMessage(
+        `L'interpréteur d'algorithmes est introuvable à l'emplacement configuré : ${interpreterPath}`,
+        chooseAction
+      );
+      if (selected === chooseAction) {
+        const picked = await vscode.window.showOpenDialog({
+          canSelectMany: false,
+          openLabel: "Sélectionner algo.exe",
+          filters: { 'Exécutables': ['exe', 'bat', 'cmd', '*'] }
+        });
+        if (picked && picked[0]) {
+          interpreterPath = picked[0].fsPath;
+          await config.update('interpreterPath', interpreterPath, vscode.ConfigurationTarget.Global);
+          vscode.window.showInformationMessage(`Chemin de l'interpréteur mis à jour : ${interpreterPath}`);
+          return interpreterPath;
+        }
+      }
+      return undefined;
+    }
+
+    return interpreterPath;
+  }
+
   // --- Execution Command (Lancement de l'interpréteur algo.exe) ---
   const runCommand = vscode.commands.registerCommand('algorithme.run', async (fileUri?: vscode.Uri) => {
     let document: vscode.TextDocument | undefined;
@@ -478,35 +511,8 @@ export function activate(context: vscode.ExtensionContext) {
       await document.save();
     }
 
-    const config = vscode.workspace.getConfiguration('algorithme');
-    let interpreterPath = config.get<string>('interpreterPath');
-    if (!interpreterPath || interpreterPath.trim() === '') {
-      interpreterPath = 'C:\\xampp-school\\htdocs\\MesProjets\\AlgorithmCompiler\\algo.exe';
-    }
-
-    if (!fs.existsSync(interpreterPath)) {
-      const chooseAction = "Sélectionner algo.exe...";
-      const selected = await vscode.window.showErrorMessage(
-        `L'interpréteur d'algorithmes est introuvable à l'emplacement configuré : ${interpreterPath}`,
-        chooseAction
-      );
-      if (selected === chooseAction) {
-        const picked = await vscode.window.showOpenDialog({
-          canSelectMany: false,
-          openLabel: "Sélectionner algo.exe",
-          filters: { 'Exécutables': ['exe', 'bat', 'cmd', '*'] }
-        });
-        if (picked && picked[0]) {
-          interpreterPath = picked[0].fsPath;
-          await config.update('interpreterPath', interpreterPath, vscode.ConfigurationTarget.Global);
-          vscode.window.showInformationMessage(`Chemin de l'interpréteur mis à jour : ${interpreterPath}`);
-        } else {
-          return;
-        }
-      } else {
-        return;
-      }
-    }
+    const interpreterPath = await getInterpreterPath();
+    if (!interpreterPath) return;
 
     const filePath = document.fileName;
     const workingDir = path.dirname(filePath);
@@ -539,6 +545,98 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   context.subscriptions.push(runCommand);
+
+  // --- Transpilation Command (Transpilation en Python via algo.exe --to-python) ---
+  const toPythonCommand = vscode.commands.registerCommand('algorithme.toPython', async (fileUri?: vscode.Uri) => {
+    let document: vscode.TextDocument | undefined;
+
+    if (fileUri && fileUri.fsPath) {
+      document = await vscode.workspace.openTextDocument(fileUri);
+    } else if (vscode.window.activeTextEditor) {
+      document = vscode.window.activeTextEditor.document;
+    }
+
+    if (!document) {
+      vscode.window.showWarningMessage("Veuillez ouvrir ou sélectionner un fichier d'algorithme (.alg) à transpiler en Python.");
+      return;
+    }
+
+    if (document.languageId !== 'algorithme' && !/\.(alg|algo|algorithme)$/i.test(document.fileName)) {
+      vscode.window.showWarningMessage("Le fichier sélectionné n'est pas un algorithme (.alg, .algo, .algorithme).");
+      return;
+    }
+
+    if (document.isDirty) {
+      await document.save();
+    }
+
+    const interpreterPath = await getInterpreterPath();
+    if (!interpreterPath) return;
+
+    const filePath = document.fileName;
+    const workingDir = path.dirname(filePath);
+    const pyFilePath = filePath.replace(/\.(alg|algo|algorithme)$/i, '.py');
+
+    await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: "Transpilation de l'algorithme en Python...",
+      cancellable: false
+    }, () => {
+      return new Promise<void>((resolve) => {
+        execFile(interpreterPath, [filePath, '--to-python', pyFilePath], { cwd: workingDir }, async (error, stdout, stderr) => {
+          if (error) {
+            const msg = (stderr || stdout || error.message).trim();
+            vscode.window.showErrorMessage(`Erreur lors de la transpilation en Python : ${msg}`);
+            resolve();
+            return;
+          }
+
+          if (!fs.existsSync(pyFilePath)) {
+            if (stdout && stdout.trim()) {
+              fs.writeFileSync(pyFilePath, stdout, 'utf8');
+            } else {
+              vscode.window.showErrorMessage("La transpilation a échoué : aucun fichier Python généré.");
+              resolve();
+              return;
+            }
+          }
+
+          try {
+            const pyDoc = await vscode.workspace.openTextDocument(pyFilePath);
+            await vscode.window.showTextDocument(pyDoc, {
+              viewColumn: vscode.ViewColumn.Beside,
+              preserveFocus: false
+            });
+
+            const fileName = path.basename(pyFilePath);
+            const actionRun = "Exécuter en Python";
+            vscode.window.showInformationMessage(
+              `Algorithme transpilé avec succès dans '${fileName}' !`,
+              actionRun
+            ).then(selected => {
+              if (selected === actionRun) {
+                let pyTerminal = vscode.window.terminals.find(t => t.name === 'Python (Algorithme)');
+                if (!pyTerminal) {
+                  pyTerminal = vscode.window.createTerminal({
+                    name: 'Python (Algorithme)',
+                    cwd: workingDir
+                  });
+                }
+                pyTerminal.show();
+                pyTerminal.sendText(`python "${pyFilePath}"`);
+              }
+            });
+          } catch (err: any) {
+            vscode.window.showErrorMessage(`Impossible d'ouvrir le fichier Python généré : ${err.message}`);
+          }
+
+          resolve();
+        });
+      });
+    });
+  });
+
+  context.subscriptions.push(toPythonCommand);
 
   // Live update preview on edits
   const docChangeDisposable = vscode.workspace.onDidChangeTextDocument((e) => {

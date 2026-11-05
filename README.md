@@ -4,7 +4,7 @@
   <img src="icon.png" width="128" height="128" alt="Logo Algorithme Tunisien" />
 </p>
 
-[![Version](https://img.shields.io/badge/version-1.7.0-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-1.8.0-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.
@@ -44,6 +44,19 @@ Exécutez vos algorithmes en un clic directement au sein de VS Code grâce à l'
   - Compatible avec PowerShell, CMD (Invite de commandes) et Bash/Zsh.
 - **Sauvegarde automatique** : Le document est automatiquement sauvegardé avant chaque exécution pour garantir la prise en compte des dernières modifications.
 - **Chemin configurable** : Définissez l'emplacement de `algo.exe` via le paramètre `algorithme.interpreterPath`. Si l'exécutable est déplacé ou introuvable, l'extension vous propose automatiquement de le localiser via un sélecteur de fichier et enregistre votre choix.
+
+---
+
+### 🐍 Transpilation Automatique vers Python 3
+Convertissez instantanément vos algorithmes en code Python 3 propre, structuré et conforme aux programmes officiels :
+- **Lancement rapide** :
+  - Cliquez sur le bouton **Transpiler en Python** dans la barre de titre de l'éditeur (`editor/title`).
+  - Ou appuyez sur la combinaison **`Shift+F5`**.
+  - Ou effectuez un clic droit dans l'éditeur ou dans l'explorateur : *« Algorithme : Transpiler en Python »*.
+- **Affichage côte à côte** :
+  - Le fichier Python généré (`mon_programme.py`) est enregistré dans le même dossier et s'ouvre automatiquement à droite (`ViewColumn.Beside`) avec la coloration syntaxique Python.
+- **Exécution directe** :
+  - Un bouton d'action **« Exécuter en Python »** dans la notification vous permet de lancer directement le fichier Python généré dans un terminal interactif.
 
 ---
 
@@ -212,6 +225,7 @@ Appuyez sur `Ctrl+Shift+V` pour afficher l'aperçu avec le tableau TDO formaté,
 | Raccourci | macOS | Action |
 |-----------|-------|--------|
 | **`F5`** | **`F5`** | Exécuter l'algorithme dans le terminal interactif |
+| **`Shift+F5`** | **`Shift+F5`** | Transpiler l'algorithme en code Python 3 |
 | **`Ctrl+Shift+V`** | **`Cmd+Shift+V`** | Ouvrir / afficher le volet d'aperçu dynamique |
 | **`Shift+Alt+F`** | **`Shift+Option+F`** | Formater et indenter le document |
 | **`Ctrl+.`** | **`Cmd+.`** | Actions rapides (Quick Fix / fermer un bloc manquant) |

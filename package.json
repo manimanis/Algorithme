@@ -2,7 +2,7 @@
   "name": "tunisian-algorithms-highlighter",
   "displayName": "Extension pour l'Algorithme Tunisien",
   "description": "Syntax highlighting, operator auto-replacement and preview with TDO/TDNT tables for the Algorithme language",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "publisher": "mohamedanismani",
   "icon": "icon.png",
   "license": "MIT",
@@ -16,6 +16,7 @@
   "activationEvents": [
     "onLanguage:algorithme",
     "onCommand:algorithme.run",
+    "onCommand:algorithme.toPython",
     "onCommand:algorithme.showPreview"
   ],
   "main": "./out/extension.js",
@@ -25,6 +26,11 @@
         "command": "algorithme.run",
         "title": "Algorithme : Exécuter l'algorithme",
         "icon": "$(play)"
+      },
+      {
+        "command": "algorithme.toPython",
+        "title": "Algorithme : Transpiler en Python",
+        "icon": "$(file-code)"
       },
       {
         "command": "algorithme.showPreview",
@@ -40,23 +46,38 @@
           "group": "navigation@1"
         },
         {
-          "command": "algorithme.showPreview",
+          "command": "algorithme.toPython",
           "when": "editorLangId == algorithme",
           "group": "navigation@2"
+        },
+        {
+          "command": "algorithme.showPreview",
+          "when": "editorLangId == algorithme",
+          "group": "navigation@3"
         }
       ],
       "editor/context": [
         {
           "command": "algorithme.run",
           "when": "editorLangId == algorithme",
-          "group": "1_modification"
+          "group": "1_modification@1"
+        },
+        {
+          "command": "algorithme.toPython",
+          "when": "editorLangId == algorithme",
+          "group": "1_modification@2"
         }
       ],
       "explorer/context": [
         {
           "command": "algorithme.run",
           "when": "resourceExtname == .alg || resourceExtname == .algo || resourceExtname == .algorithme",
-          "group": "navigation"
+          "group": "navigation@1"
+        },
+        {
+          "command": "algorithme.toPython",
+          "when": "resourceExtname == .alg || resourceExtname == .algo || resourceExtname == .algorithme",
+          "group": "navigation@2"
         }
       ]
     },
@@ -64,6 +85,11 @@
       {
         "command": "algorithme.run",
         "key": "f5",
+        "when": "editorLangId == algorithme"
+      },
+      {
+        "command": "algorithme.toPython",
+        "key": "shift+f5",
         "when": "editorLangId == algorithme"
       },
       {

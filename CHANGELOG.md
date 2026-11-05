@@ -4,6 +4,20 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
+## [1.8.0] - 2026-11-05
+
+### Added
+- **Transpilation automatique vers Python 3 (`algo.exe --to-python`)** :
+  - Nouvelle commande `algorithme.toPython` (*« Algorithme : Transpiler en Python »*).
+  - Bouton d'action rapide `$(file-code)` dans la barre de titre de l'éditeur (`editor/title`) aux côtés de l'exécution et de l'aperçu.
+  - Raccourci clavier dédié **`Shift+F5`** pour transpiler en un instant le fichier algorithme actif.
+  - Intégration dans le menu contextuel de l'éditeur et de l'explorateur de fichiers sur les fichiers `.alg`, `.algo` et `.algorithme`.
+  - Génération automatique du fichier Python correspondant (`nom_fichier.py`) dans le répertoire de travail.
+  - Ouverture côte à côte (`ViewColumn.Beside`) du code Python généré avec coloration syntaxique complète.
+  - Notification de confirmation avec bouton d'action direct **« Exécuter en Python »** pour lancer immédiatement le script dans un terminal dédié.
+
+---
+
 ## [1.7.0] - 2026-11-04
 
 ### Added
