@@ -546,6 +546,99 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(runCommand);
 
+  // --- Compilation Command (Compilation en exécutable autonome .exe via algo.exe --build-exe) ---
+  const compileExeCommand = vscode.commands.registerCommand('algorithme.compileExe', async (fileUri?: vscode.Uri) => {
+    let document: vscode.TextDocument | undefined;
+
+    if (fileUri && fileUri.fsPath) {
+      document = await vscode.workspace.openTextDocument(fileUri);
+    } else if (vscode.window.activeTextEditor) {
+      document = vscode.window.activeTextEditor.document;
+    }
+
+    if (!document) {
+      vscode.window.showWarningMessage("Veuillez ouvrir ou sélectionner un fichier d'algorithme (.alg) à compiler en exécutable.");
+      return;
+    }
+
+    if (document.languageId !== 'algorithme' && !/\.(alg|algo|algorithme)$/i.test(document.fileName)) {
+      vscode.window.showWarningMessage("Le fichier sélectionné n'est pas un algorithme (.alg, .algo, .algorithme).");
+      return;
+    }
+
+    if (document.isDirty) {
+      await document.save();
+    }
+
+    const interpreterPath = await getInterpreterPath();
+    if (!interpreterPath) return;
+
+    const filePath = document.fileName;
+    const workingDir = path.dirname(filePath);
+    const exeFilePath = filePath.replace(/\.(alg|algo|algorithme)$/i, '.exe');
+
+    await vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: "Compilation de l'algorithme en exécutable autonome (.exe)...",
+      cancellable: false
+    }, () => {
+      return new Promise<void>((resolve) => {
+        execFile(interpreterPath, [filePath, '--build-exe', exeFilePath], { cwd: workingDir }, async (error, stdout, stderr) => {
+          if (error) {
+            const msg = (stderr || stdout || error.message).trim();
+            vscode.window.showErrorMessage(`Erreur lors de la compilation en exécutable : ${msg}`);
+            resolve();
+            return;
+          }
+
+          if (!fs.existsSync(exeFilePath)) {
+            const msg = (stderr || stdout || "Aucun fichier exécutable généré.").trim();
+            vscode.window.showErrorMessage(`La compilation a échoué : ${msg}`);
+            resolve();
+            return;
+          }
+
+          const exeFileName = path.basename(exeFilePath);
+          const actionRun = "Exécuter l'exécutable";
+          const actionFolder = "Ouvrir l'emplacement";
+          vscode.window.showInformationMessage(
+            `Algorithme compilé avec succès en exécutable autonome : '${exeFileName}' !`,
+            actionRun,
+            actionFolder
+          ).then(selected => {
+            if (selected === actionRun) {
+              let exeTerminal = vscode.window.terminals.find(t => t.name === 'Algorithme Exécutable');
+              if (!exeTerminal) {
+                exeTerminal = vscode.window.createTerminal({
+                  name: 'Algorithme Exécutable',
+                  cwd: workingDir
+                });
+              }
+              exeTerminal.show();
+              const shell = (vscode.env.shell || '').toLowerCase();
+              let runCommandStr: string;
+              if (shell.includes('powershell') || shell.includes('pwsh')) {
+                runCommandStr = `& "${exeFilePath}"`;
+              } else if (shell.includes('bash') || shell.includes('sh') || shell.includes('zsh')) {
+                const escapedExe = exeFilePath.replace(/\\/g, '/');
+                runCommandStr = `"${escapedExe}"`;
+              } else {
+                runCommandStr = `"${exeFilePath}"`;
+              }
+              exeTerminal.sendText(runCommandStr);
+            } else if (selected === actionFolder) {
+              vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(exeFilePath));
+            }
+          });
+
+          resolve();
+        });
+      });
+    });
+  });
+
+  context.subscriptions.push(compileExeCommand);
+
   // --- Transpilation Command (Transpilation en Python via algo.exe --to-python) ---
   const toPythonCommand = vscode.commands.registerCommand('algorithme.toPython', async (fileUri?: vscode.Uri) => {
     let document: vscode.TextDocument | undefined;

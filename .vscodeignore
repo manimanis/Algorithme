@@ -7,3 +7,4 @@ node_modules
 install.bat
 install.ps1
 tunisian-algorithms-highlighter-*.vsix
+**/*.exe

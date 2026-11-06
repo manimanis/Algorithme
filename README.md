@@ -4,7 +4,7 @@
   <img src="icon.png" width="128" height="128" alt="Logo Algorithme Tunisien" />
 </p>
 
-[![Version](https://img.shields.io/badge/version-1.8.1-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-1.9.1-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.
@@ -12,6 +12,29 @@ Une extension VS Code complète et moderne pour le langage **Algorithme** — le
 ---
 
 ## 🌟 Fonctionnalités Principales
+
+### ⚡ Suite d'Outils Unifiée : Interpréter, Compiler & Transpiler
+L'extension intègre une suite d'outils complète directement reliée au compilateur officiel `algo.exe`. Tous les outils sont regroupés dans **un menu déroulant unique `[ ▶ ˅ ]`** dans la barre de titre de l'éditeur ainsi que dans le sous-menu contextuel **« Algorithme »** (clic droit dans l'éditeur ou dans l'explorateur) :
+
+1. **▶ Interpréter l'algorithme (`F5`)** *(Mode par défaut)* :
+   - Exécute instantanément l'algorithme via la Machine Virtuelle bytecode ou l'interpréteur AST.
+   - Ouvre une console dédiée `Algorithme` dans le répertoire du fichier en cours d'exécution.
+   - Prise en charge complète des saisies interactives au clavier (`Lire(...)`) et de l'affichage en temps réel des résultats (`Ecrire(...)`).
+   - Sauvegarde automatique du document avant chaque exécution.
+   - Compatible avec PowerShell, CMD (Invite de commandes) et Bash/Zsh.
+
+2. **⚙️ Compiler en exécutable autonome (`Ctrl+F5`)** :
+   - Compile l'algorithme sous forme d'un programme binaire Windows autonome (`.exe`) indépendant, sans dépendance externe, via l'option `--build-exe`.
+   - Notification interactive proposant d'**Exécuter l'exécutable** dans un terminal dédié ou d'**Ouvrir l'emplacement** du binaire généré dans l'explorateur de fichiers.
+
+3. **🐍 Transpiler en Python 3 (`Shift+F5`)** :
+   - Convertit instantanément vos algorithmes en code Python 3 propre, structuré et conforme aux programmes officiels via l'option `--to-python`.
+   - Le fichier Python généré (`mon_programme.py`) est enregistré dans le même dossier et s'ouvre automatiquement côte à côte (`ViewColumn.Beside`) avec coloration syntaxique complète.
+   - Bouton d'action direct **« Exécuter en Python »** pour lancer immédiatement le script dans un terminal dédié.
+
+- **Chemin configurable** : Définissez l'emplacement de `algo.exe` via le paramètre `algorithme.interpreterPath`. Si l'exécutable est déplacé ou introuvable, l'extension vous propose automatiquement de le localiser via un sélecteur de fichier et enregistre votre choix.
+
+---
 
 ### 🔀 Structure à Choix Multiples (Selon)
 L'extension supporte la syntaxe complète de la structure `Selon` avec cas simples, listes de valeurs, intervalles et clause alternative :
@@ -27,50 +50,22 @@ Fin Selon
 - Prise en charge avec ou sans le mot-clé `Faire` (`Selon v` ou `Selon v Faire`).
 - Intervalles de valeurs avec l'opérateur `..` (`4 .. 5`, `8..9`).
 - Clause alternative `Sinon` ou `Autrement` (avec ou sans `:`).
-- Fermeture automatique du bloc à la frappe (`Fin Selon`) et vérification syntaxique.
+- Fermeture automatique du bloc à la frappe (`Fin Selon` ou `FinSelon`) et vérification syntaxique.
 - Exécution directe et fidèle dans l'interpréteur `algo.exe`.
-
----
-
-### ▶️ Exécution Directe & Interactive (Interpréteur / Compilateur)
-Exécutez vos algorithmes en un clic directement au sein de VS Code grâce à l'intégration de l'interpréteur `algo.exe` :
-- **Lancement rapide** :
-  - Cliquez sur le bouton ▶ **Exécuter** dans la barre d'onglets de l'éditeur.
-  - Ou appuyez sur la touche **`F5`**.
-  - Ou faites un clic droit dans l'éditeur ou sur un fichier `.alg` dans l'explorateur : *« Algorithme : Exécuter l'algorithme »*.
-- **Terminal interactif dédié** :
-  - Ouvre une console dédiée `Algorithme` dans le répertoire du fichier en cours d'exécution.
-  - Prise en charge complète des saisies interactives au clavier (`Lire(...)`) et de l'affichage en temps réel des résultats (`Ecrire(...)`).
-  - Compatible avec PowerShell, CMD (Invite de commandes) et Bash/Zsh.
-- **Sauvegarde automatique** : Le document est automatiquement sauvegardé avant chaque exécution pour garantir la prise en compte des dernières modifications.
-- **Chemin configurable** : Définissez l'emplacement de `algo.exe` via le paramètre `algorithme.interpreterPath`. Si l'exécutable est déplacé ou introuvable, l'extension vous propose automatiquement de le localiser via un sélecteur de fichier et enregistre votre choix.
-
----
-
-### 🐍 Transpilation Automatique vers Python 3
-Convertissez instantanément vos algorithmes en code Python 3 propre, structuré et conforme aux programmes officiels :
-- **Lancement rapide** :
-  - Cliquez sur le bouton **Transpiler en Python** dans la barre de titre de l'éditeur (`editor/title`).
-  - Ou appuyez sur la combinaison **`Shift+F5`**.
-  - Ou effectuez un clic droit dans l'éditeur ou dans l'explorateur : *« Algorithme : Transpiler en Python »*.
-- **Affichage côte à côte** :
-  - Le fichier Python généré (`mon_programme.py`) est enregistré dans le même dossier et s'ouvre automatiquement à droite (`ViewColumn.Beside`) avec la coloration syntaxique Python.
-- **Exécution directe** :
-  - Un bouton d'action **« Exécuter en Python »** dans la notification vous permet de lancer directement le fichier Python généré dans un terminal interactif.
 
 ---
 
 ### 🛡️ Vérification des Blocs & Fermeture Automatique
 L'éditeur analyse en temps réel la structure de votre algorithme pour garantir que chaque structure ouverte est correctement fermée :
 
-- **Paires de blocs vérifiées** :
+- **Paires de blocs vérifiées (syntaxe standard et attachée tolérée)** :
   - `Début` ➔ `Fin`
-  - `Si ... Alors` ➔ `Fin Si`
-  - `Tant Que ... Faire` ➔ `Fin Tant Que`
+  - `Si ... Alors` ➔ `Fin Si` ou `FinSi`
+  - `Tant Que ... Faire` (ou `TantQue`) ➔ `Fin Tant Que` ou `FinTantQue`
   - `Répéter` ➔ `Jusqu'à`
-  - `Pour ... Faire` ➔ `Fin Pour`
-  - `Selon` ➔ `Fin Selon`
-  - `Enregistrement` ➔ `Fin`
+  - `Pour ... Faire` ➔ `Fin Pour` ou `FinPour`
+  - `Selon` ➔ `Fin Selon` ou `FinSelon`
+  - `Enregistrement` ➔ `Fin` ou `Fin Enregistrement` / `FinEnregistrement`
 - **Fermeture automatique à la frappe** : Lorsque vous tapez l'expression ouvrante et appuyez sur `Entrée`, l'éditeur vérifie si le bloc est déjà fermé. Si ce n'est pas le cas, il insère automatiquement l'expression fermante avec l'indentation adéquate et place le curseur à l'intérieur du bloc.
 - **Diagnostic en temps réel** : Si un bloc n'est pas fermé, l'éditeur le signale par un soulignement rouge et un message dans le panneau **Problèmes** (`Expression fermante manquante : 'Fin Si'`).
 - **Correction rapide (Quick Fix 💡)** : En cliquant sur l'ampoule ou avec le raccourci `Ctrl+.`, insérez instantanément l'expression fermante manquante en un clic.
@@ -224,10 +219,11 @@ Appuyez sur `Ctrl+Shift+V` pour afficher l'aperçu avec le tableau TDO formaté,
 
 | Raccourci | macOS | Action |
 |-----------|-------|--------|
-| **`F5`** | **`F5`** | Exécuter l'algorithme dans le terminal interactif |
-| **`Shift+F5`** | **`Shift+F5`** | Transpiler l'algorithme en code Python 3 |
-| **`Ctrl+Shift+V`** | **`Cmd+Shift+V`** | Ouvrir / afficher le volet d'aperçu dynamique |
-| **`Shift+Alt+F`** | **`Shift+Option+F`** | Formater et indenter le document |
+| **`F5`** | **`F5`** | **Interpréter l'algorithme** dans le terminal interactif (mode par défaut) |
+| **`Ctrl+F5`** | **`Ctrl+F5`** | **Compiler en exécutable autonome (.exe)** via `algo.exe --build-exe` |
+| **`Shift+F5`** | **`Shift+F5`** | **Transpiler en Python 3** via `algo.exe --to-python` |
+| **`Ctrl+Shift+V`** | **`Cmd+Shift+V`** | Ouvrir / afficher le volet d'aperçu dynamique (TDO/TDNT) |
+| **`Shift+Alt+F`** | **`Shift+Option+F`** | Formater et indenter automatiquement le document |
 | **`Ctrl+.`** | **`Cmd+.`** | Actions rapides (Quick Fix / fermer un bloc manquant) |
 
 ---

@@ -2,12 +2,12 @@
   "name": "tunisian-algorithms-highlighter",
   "displayName": "Extension pour l'Algorithme Tunisien",
   "description": "Syntax highlighting, operator auto-replacement and preview with TDO/TDNT tables for the Algorithme language",
-  "version": "1.8.1",
+  "version": "1.9.1",
   "publisher": "mohamedanismani",
   "icon": "icon.png",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.60.0"
+    "vscode": "^1.65.0"
   },
   "categories": [
     "Programming Languages",
@@ -16,6 +16,7 @@
   "activationEvents": [
     "onLanguage:algorithme",
     "onCommand:algorithme.run",
+    "onCommand:algorithme.compileExe",
     "onCommand:algorithme.toPython",
     "onCommand:algorithme.showPreview"
   ],
@@ -24,60 +25,91 @@
     "commands": [
       {
         "command": "algorithme.run",
-        "title": "Algorithme : Exécuter l'algorithme",
+        "title": "Algorithme : Interpréter l'algorithme",
+        "shortTitle": "Interpréter l'algorithme",
         "icon": "$(play)"
+      },
+      {
+        "command": "algorithme.compileExe",
+        "title": "Algorithme : Compiler en exécutable",
+        "shortTitle": "Compiler en exécutable",
+        "icon": "$(gear)"
       },
       {
         "command": "algorithme.toPython",
         "title": "Algorithme : Transpiler en Python",
+        "shortTitle": "Transpiler en Python",
         "icon": "$(file-code)"
       },
       {
         "command": "algorithme.showPreview",
         "title": "Algorithme : Ouvrir l'aperçu (avec tableaux TDO/TDNT)",
+        "shortTitle": "Aperçu",
         "icon": "$(open-preview)"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "algorithme.toolsSubmenu",
+        "label": "Algorithme",
+        "icon": "$(play)"
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "algorithme.run",
+          "command": "algorithme.showPreview",
           "when": "editorLangId == algorithme",
           "group": "navigation@1"
+        }
+      ],
+      "editor/title/run": [
+        {
+          "command": "algorithme.run",
+          "when": "editorLangId == algorithme",
+          "group": "1_run@1"
+        },
+        {
+          "command": "algorithme.compileExe",
+          "when": "editorLangId == algorithme",
+          "group": "1_run@2"
         },
         {
           "command": "algorithme.toPython",
           "when": "editorLangId == algorithme",
-          "group": "navigation@2"
-        },
-        {
-          "command": "algorithme.showPreview",
-          "when": "editorLangId == algorithme",
-          "group": "navigation@3"
+          "group": "1_run@3"
         }
       ],
       "editor/context": [
         {
-          "command": "algorithme.run",
+          "submenu": "algorithme.toolsSubmenu",
           "when": "editorLangId == algorithme",
           "group": "1_modification@1"
-        },
-        {
-          "command": "algorithme.toPython",
-          "when": "editorLangId == algorithme",
-          "group": "1_modification@2"
         }
       ],
       "explorer/context": [
         {
-          "command": "algorithme.run",
+          "submenu": "algorithme.toolsSubmenu",
           "when": "resourceExtname == .alg || resourceExtname == .algo || resourceExtname == .algorithme",
           "group": "navigation@1"
+        }
+      ],
+      "algorithme.toolsSubmenu": [
+        {
+          "command": "algorithme.run",
+          "group": "1_tools@1"
+        },
+        {
+          "command": "algorithme.compileExe",
+          "group": "1_tools@2"
         },
         {
           "command": "algorithme.toPython",
-          "when": "resourceExtname == .alg || resourceExtname == .algo || resourceExtname == .algorithme",
-          "group": "navigation@2"
+          "group": "1_tools@3"
+        },
+        {
+          "command": "algorithme.showPreview",
+          "group": "2_preview@1"
         }
       ]
     },
@@ -85,6 +117,11 @@
       {
         "command": "algorithme.run",
         "key": "f5",
+        "when": "editorLangId == algorithme"
+      },
+      {
+        "command": "algorithme.compileExe",
+        "key": "ctrl+f5",
         "when": "editorLangId == algorithme"
       },
       {

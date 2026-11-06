@@ -4,6 +4,35 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
+## [1.9.1] - 2026-11-06
+
+### Changed
+- **Harmonisation et regroupement des outils dans un menu unique** :
+  - Combinaison des trois outils d'exécution et de conversion dans le menu déroulant du bouton d'exécution (`editor/title/run`) :
+    1. **Interpréter l'algorithme** (action par défaut au clic sur ▶ ou via `F5`).
+    2. **Compiler en exécutable** (`Ctrl+F5`).
+    3. **Transpiler en Python** (`Shift+F5`).
+  - Suppression des boutons séparés redondants dans la barre de titre de l'éditeur pour une interface propre et ergonomique.
+  - Regroupement des trois actions dans un sous-menu contextuel unique **« Algorithme »** (clic droit dans l'éditeur et dans l'explorateur de fichiers).
+
+---
+
+## [1.9.0] - 2026-11-06
+
+### Added
+- **Compilation d'un algorithme en exécutable autonome (.exe)** :
+  - Nouvelle commande `algorithme.compileExe` (*« Algorithme : Compiler en exécutable (.exe) »*).
+  - Utilise l'option `--build-exe` du compilateur `algo.exe` pour générer un fichier `.exe` autonome et indépendant.
+  - Exécution par défaut préservée en mode interprété (`algo.exe <fichier.alg>`) via le bouton ▶ ou la touche `F5`.
+  - Notification de confirmation avec actions directes : **« Exécuter l'exécutable »** (lance le binaire dans le terminal) et **« Ouvrir l'emplacement »** (révèle le `.exe` dans l'explorateur de fichiers).
+  - Raccourci clavier dédié **`Ctrl+F5`** pour compiler en un instant le fichier algorithme actif.
+- **Intégration dans des sous-menus dédiés** :
+  - **Menu contextuel de l'éditeur** : ajout d'un sous-menu **« Algorithme : Compiler »** regroupant la compilation en exécutable (.exe) et la transpilation en Python, avec l'exécution interprétée par défaut directement accessible à la racine.
+  - **Menu contextuel de l'explorateur** : sous-menu identique accessible par clic droit sur tout fichier `.alg`, `.algo` ou `.algorithme`.
+  - **Barre de titre de l'éditeur (`editor/title/run`)** : menu déroulant attaché au bouton d'exécution permettant de basculer entre l'exécution interprétée (par défaut) et la compilation en binaire autonome.
+
+---
+
 ## [1.8.1] - 2026-11-06
 
 ### Added

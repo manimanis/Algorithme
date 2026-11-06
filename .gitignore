@@ -3,3 +3,4 @@ node_modules
 *.vsix
 *.bat
 *.ps1
+*.exe
