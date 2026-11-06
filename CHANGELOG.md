@@ -4,6 +4,26 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
+## [1.8.1] - 2026-11-06
+
+### Added
+- **Tolérance des mots-clés de structure en un seul mot** :
+  - Support complet de `FinSi` (équivalent à `Fin Si`).
+  - Support complet de `FinPour` (équivalent à `Fin Pour`).
+  - Support complet de `TantQue` (équivalent à `Tant Que`).
+  - Support complet de `FinTantQue` (équivalent à `Fin Tant Que`).
+  - Support complet de `FinSelon` (équivalent à `Fin Selon`).
+  - Tolérance également de `FinEnregistrement`.
+- **Mise à jour de la coloration syntaxique (TextMate grammar)** :
+  - Détection et mise en évidence des mots-clés avec ou sans espaces intermédiaires.
+- **Mise à jour du validateur de blocs et de l'auto-fermeture** :
+  - Appariement exact des blocs qu'ils soient fermés avec `Fin Si` / `FinSi`, `Fin Pour` / `FinPour`, `Fin Tant Que` / `FinTantQue`, `Fin Selon` / `FinSelon`.
+  - Prise en charge des ouvertures `TantQue ... Faire` et `Tant Que ... Faire`.
+- **Mise à jour du formateur et de l'aperçu dynamique** :
+  - Désindentation automatique et coloration adaptées pour les deux formes d'écriture.
+
+---
+
 ## [1.8.0] - 2026-11-05
 
 ### Added

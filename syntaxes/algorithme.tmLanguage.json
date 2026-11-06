@@ -68,23 +68,23 @@
           "patterns": [
             {
               "name": "keyword.control.algorithme",
-              "match": "(?i)\\bfin\\s+si\\b"
+              "match": "(?i)\\bfin\\s*si\\b"
             },
             {
               "name": "keyword.control.algorithme",
-              "match": "(?i)\\bfin\\s+tant\\s+que\\b"
+              "match": "(?i)\\bfin\\s*(?:tant\\s*que|tantque)\\b"
             },
             {
               "name": "keyword.control.algorithme",
-              "match": "(?i)\\bfin\\s+pour\\b"
+              "match": "(?i)\\bfin\\s*pour\\b"
             },
             {
               "name": "keyword.control.algorithme",
-              "match": "(?i)\\bfin\\s+selon\\b"
+              "match": "(?i)\\bfin\\s*selon\\b"
             },
             {
               "name": "keyword.control.algorithme",
-              "match": "(?i)\\bfin\\s+enregistrement\\b"
+              "match": "(?i)\\bfin\\s*enregistrement\\b"
             },
             {
               "name": "storage.type.algorithme",
@@ -92,7 +92,7 @@
             },
             {
               "name": "keyword.control.algorithme",
-              "match": "(?i)\\btant\\s+que\\b"
+              "match": "(?i)\\btant\\s*que\\b"
             },
             {
               "name": "keyword.control.algorithme",
@@ -103,7 +103,7 @@
         {
           "comment": "Single keywords (case-insensitive)",
           "name": "keyword.control.algorithme",
-          "match": "(?i)\\b(algorithme|debut|début|fin|si|alors|sinon|faire|répéter|repeter|pour|de|à|pas|procedure|procédure|fonction|tableau|et|ou|non|retourner|selon|cas|autrement|enregistrement|enregistrements|fichier|fichiers|lignes|colonnes|ligne|colonne|type|var)\\b"
+          "match": "(?i)\\b(algorithme|debut|début|fin|si|alors|sinon|faire|répéter|repeter|pour|de|à|pas|procedure|procédure|fonction|tableau|et|ou|non|retourner|selon|cas|autrement|enregistrement|enregistrements|fichier|fichiers|lignes|colonnes|ligne|colonne|type|var|finsi|finpour|tantque|fintantque|finselon)\\b"
         },
         {
           "comment": "Data types (case-insensitive)",

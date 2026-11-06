@@ -25,22 +25,22 @@ export function getOpeningBlockFromLine(rawText: string): { kind: BlockOpening['
   if (!code) return null;
 
   // Single-line block checks: if the line opens AND closes on the same line, return null
-  if (/(?<=^|[^\p{L}\p{N}_])si(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])alors(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin\s+si(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
+  if (/(?<=^|[^\p{L}\p{N}_])si(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])alors(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin\s*si(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
     return null;
   }
-  if (/(?<=^|[^\p{L}\p{N}_])tant\s+que(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])faire(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin\s+tant\s+que(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
+  if (/(?<=^|[^\p{L}\p{N}_])tant\s*que(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])faire(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin\s*(?:tant\s*que|tantque)(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
     return null;
   }
-  if (/(?<=^|[^\p{L}\p{N}_])pour(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])faire(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin\s+pour(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
+  if (/(?<=^|[^\p{L}\p{N}_])pour(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])faire(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin\s*pour(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
     return null;
   }
   if (/(?<=^|[^\p{L}\p{N}_])(r[eé]p[eé]ter)(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])jusqu['’]?[aà](?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
     return null;
   }
-  if (/(?<=^|[^\p{L}\p{N}_])selon(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin\s+selon(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
+  if (/(?<=^|[^\p{L}\p{N}_])selon(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin\s*selon(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
     return null;
   }
-  if (/(?<=^|[^\p{L}\p{N}_])enregistrement(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin(\s+enregistrement)?(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
+  if (/(?<=^|[^\p{L}\p{N}_])enregistrement(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])fin(\s*enregistrement)?(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
     return null;
   }
 
@@ -53,13 +53,13 @@ export function getOpeningBlockFromLine(rawText: string): { kind: BlockOpening['
 
   // 2. Si ... Alors (excluding 'Sinon Si ... Alors')
   if (/(?<=^|[^\p{L}\p{N}_])si(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])alors(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
-    if (!/(?<=^|[^\p{L}\p{N}_])sinon\s+si(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
+    if (!/(?<=^|[^\p{L}\p{N}_])sinon\s*si(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
       return { kind: 'si', label: 'Si ... Alors', expectedClose: 'Fin Si' };
     }
   }
 
   // 3. Tant Que ... Faire
-  if (/(?<=^|[^\p{L}\p{N}_])tant\s+que(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])faire(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
+  if (/(?<=^|[^\p{L}\p{N}_])tant\s*que(?=[^\p{L}\p{N}_]|$).*?(?<=^|[^\p{L}\p{N}_])faire(?=[^\p{L}\p{N}_]|$)/iu.test(code)) {
     return { kind: 'tantque', label: 'Tant Que ... Faire', expectedClose: 'Fin Tant Que' };
   }
 
@@ -107,7 +107,7 @@ export function validateAlgorithmeBlocks(document: vscode.TextDocument): vscode.
   let inBlockComment = false;
   let inTableSection = false;
 
-  const tokenRegex = /(?<=^|[^\p{L}\p{N}_])(fin\s+si|fin\s+tant\s+que|fin\s+pour|fin\s+selon|fin\s+enregistrement|jusqu['’]?[aà]|d[eé]but|sinon\s+si|si|alors|tant\s+que|pour|faire|r[eé]p[eé]ter|selon|enregistrement|fin)(?=[^\p{L}\p{N}_]|$)/giu;
+  const tokenRegex = /(?<=^|[^\p{L}\p{N}_])(fin\s*si|fin\s*(?:tant\s*que|tantque)|fin\s*pour|fin\s*selon|fin\s*enregistrement|jusqu['’]?[aà]|d[eé]but|sinon\s*si|si|alors|tant\s*que|pour|faire|r[eé]p[eé]ter|selon|enregistrement|fin)(?=[^\p{L}\p{N}_]|$)/giu;
 
   for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
     const rawLine = document.lineAt(lineIndex).text;
@@ -177,9 +177,10 @@ export function validateAlgorithmeBlocks(document: vscode.TextDocument): vscode.
     while (i < tokens.length) {
       const tok = tokens[i];
       const lower = tok.lower;
+      const norm = lower.replace(/\s+/g, '');
 
       // Skip 'Sinon Si ... Alors' branches
-      if (lower === 'sinon si') {
+      if (norm === 'sinonsi') {
         i++;
         while (i < tokens.length && tokens[i].lower !== 'alors') i++;
         if (i < tokens.length && tokens[i].lower === 'alors') i++;
@@ -235,7 +236,7 @@ export function validateAlgorithmeBlocks(document: vscode.TextDocument): vscode.
       }
 
       // 3. Tant Que
-      if (lower === 'tant que') {
+      if (norm === 'tantque') {
         let j = i + 1;
         while (j < tokens.length && tokens[j].lower !== 'faire') j++;
         if (j < tokens.length && tokens[j].lower === 'faire') {
@@ -321,7 +322,7 @@ export function validateAlgorithmeBlocks(document: vscode.TextDocument): vscode.
       }
 
       // In table section, ignore non-record tokens
-      if (inTableSection && lower !== 'enregistrement' && lower !== 'fin' && lower !== 'fin enregistrement') {
+      if (inTableSection && lower !== 'enregistrement' && lower !== 'fin' && norm !== 'finenregistrement') {
         i++;
         continue;
       }
@@ -341,27 +342,27 @@ export function validateAlgorithmeBlocks(document: vscode.TextDocument): vscode.
       }
 
       // Closing tokens
-      if (lower === 'fin si') {
+      if (norm === 'finsi') {
         matchClosing('si', 'Fin Si', lineIndex, tok);
         i++;
         continue;
       }
-      if (lower === 'fin tant que') {
+      if (norm === 'fintantque') {
         matchClosing('tantque', 'Fin Tant Que', lineIndex, tok);
         i++;
         continue;
       }
-      if (lower === 'fin pour') {
+      if (norm === 'finpour') {
         matchClosing('pour', 'Fin Pour', lineIndex, tok);
         i++;
         continue;
       }
-      if (lower === 'fin selon') {
+      if (norm === 'finselon') {
         matchClosing('selon', 'Fin Selon', lineIndex, tok);
         i++;
         continue;
       }
-      if (lower === 'fin enregistrement') {
+      if (norm === 'finenregistrement') {
         matchClosing('enregistrement', 'Fin', lineIndex, tok);
         i++;
         continue;

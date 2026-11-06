@@ -753,7 +753,7 @@ function parseAlgorithme(text: string): ContentItem[] {
         }
 
         if (
-          /^(TDNT|TDOG|TDOL|TDO|Algorithme|Procédure|Procedure|Fonction|Début|Debut|Fin|Si|Tant\s+que|Pour|Répéter|Repeter|Selon|Écrire|Ecrire|Lire)\b/i.test(rowTrim) ||
+          /^(TDNT|TDOG|TDOL|TDO|Algorithme|Procédure|Procedure|Fonction|Début|Debut|Fin|Si|Tant\s*que|Pour|Répéter|Repeter|Selon|Écrire|Ecrire|Lire)\b/i.test(rowTrim) ||
           rowTrim.startsWith('//') ||
           rowTrim.includes('←')
         ) {
@@ -896,7 +896,8 @@ const KEYWORDS_SET = new Set([
   'répéter', 'repeter', 'pour', 'de', 'pas',
   'procédure', 'procedure', 'fonction', 'tableau', 'selon', 'cas', 'autrement', 'retourner',
   'et', 'ou', 'non', 'vrai', 'faux', 'div', 'mod',
-  'enregistrement', 'enregistrements', 'fichier', 'fichiers', 'lignes', 'colonnes', 'ligne', 'colonne', 'type', 'var'
+  'enregistrement', 'enregistrements', 'fichier', 'fichiers', 'lignes', 'colonnes', 'ligne', 'colonne', 'type', 'var',
+  'finsi', 'finpour', 'tantque', 'fintantque', 'finselon', 'finenregistrement'
 ]);
 
 const TYPES_SET = new Set([
@@ -917,7 +918,7 @@ function highlightAlgorithmeLine(line: string): string {
   const text = line.substring(indentLength);
 
   // Single-pass tokenizer
-  const tokenRegex = /(\/\/.*$)|(".*?")|(\b(?:fin\s+si|fin\s+tant\s+que|fin\s+pour|fin\s+selon|fin\s+enregistrement|fichier\s+texte|tant\s+que)\b)|((?<=^|[^\p{L}\p{N}_])(?:jusqu['’]à|jusqu['’]a|jusqua|jusqu_à)(?=[^\p{L}\p{N}_]|$))|((?<=[\s(])à(?=[\s)]|$))|([\p{L}_][\p{L}\p{N}_]*)|(\.\.|←|≤|≥|≠|∈|@)/giu;
+  const tokenRegex = /(\/\/.*$)|(".*?")|(\b(?:fin\s*si|fin\s*(?:tant\s*que|tantque)|fin\s*pour|fin\s*selon|fin\s*enregistrement|fichier\s+texte|tant\s*que)\b)|((?<=^|[^\p{L}\p{N}_])(?:jusqu['’]à|jusqu['’]a|jusqua|jusqu_à)(?=[^\p{L}\p{N}_]|$))|((?<=[\s(])à(?=[\s)]|$))|([\p{L}_][\p{L}\p{N}_]*)|(\.\.|←|≤|≥|≠|∈|@)/giu;
 
   let result = '';
   let lastIndex = 0;

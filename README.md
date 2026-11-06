@@ -4,7 +4,7 @@
   <img src="icon.png" width="128" height="128" alt="Logo Algorithme Tunisien" />
 </p>
 
-[![Version](https://img.shields.io/badge/version-1.8.0-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-1.8.1-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.

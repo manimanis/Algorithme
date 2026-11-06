@@ -2,7 +2,7 @@
   "name": "tunisian-algorithms-highlighter",
   "displayName": "Extension pour l'Algorithme Tunisien",
   "description": "Syntax highlighting, operator auto-replacement and preview with TDO/TDNT tables for the Algorithme language",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "publisher": "mohamedanismani",
   "icon": "icon.png",
   "license": "MIT",
