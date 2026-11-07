@@ -13,6 +13,20 @@ import {
   SubprogramCompletionProvider,
   SubprogramSignatureHelpProvider
 } from './subprogramCompletion';
+import {
+  AlgorithmeDocumentSymbolProvider,
+  AlgorithmeDefinitionProvider,
+  AlgorithmeHoverProvider,
+  AlgorithmeTdoCompletionProvider
+} from './lspFeatures';
+import {
+  generateOrUpdateTDO,
+  AlgorithmeTdoCodeActionProvider
+} from './assistantFeatures';
+import {
+  createExamTemplate,
+  checkBacCompliance
+} from './teacherFeatures';
 
 let isProcessing = false;
 let previewPanel: vscode.WebviewPanel | undefined = undefined;
@@ -91,6 +105,88 @@ export function activate(context: vscode.ExtensionContext) {
       new SubprogramSignatureHelpProvider(),
       '(', ','
     )
+  );
+
+  // Register LSP Document Symbol Provider (Plan / Outline dans la barre latérale)
+  context.subscriptions.push(
+    vscode.languages.registerDocumentSymbolProvider(
+      'algorithme',
+      new AlgorithmeDocumentSymbolProvider()
+    )
+  );
+
+  // Register LSP Definition Provider (F12 / Ctrl+Clic vers le TDO ou sous-programme)
+  context.subscriptions.push(
+    vscode.languages.registerDefinitionProvider(
+      'algorithme',
+      new AlgorithmeDefinitionProvider()
+    )
+  );
+
+  // Register LSP Hover Provider (Infobulles de survol sur variables, types et mots-clés)
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider(
+      'algorithme',
+      new AlgorithmeHoverProvider()
+    )
+  );
+
+  // Register TDO Variable Completion Provider (Autocomplétion des variables déclarées dans le TDO)
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(
+      'algorithme',
+      new AlgorithmeTdoCompletionProvider()
+    )
+  );
+
+  // Register Assistant TDO Code Actions Provider (💡 Quick Fix pour générer ou compléter le TDO)
+  context.subscriptions.push(
+    vscode.languages.registerCodeActionsProvider(
+      'algorithme',
+      new AlgorithmeTdoCodeActionProvider(),
+      {
+        providedCodeActionKinds: [vscode.CodeActionKind.QuickFix]
+      }
+    )
+  );
+
+  // Register Assistant Command: Générer / Mettre à jour le TDO
+  context.subscriptions.push(
+    vscode.commands.registerCommand('algorithme.generateTDO', async (fileUri?: vscode.Uri) => {
+      let document: vscode.TextDocument | undefined;
+      if (fileUri && fileUri.fsPath) {
+        document = await vscode.workspace.openTextDocument(fileUri);
+      } else if (vscode.window.activeTextEditor) {
+        document = vscode.window.activeTextEditor.document;
+      }
+      if (!document) {
+        vscode.window.showWarningMessage("Veuillez ouvrir un fichier d'algorithme (.alg).");
+        return;
+      }
+      await generateOrUpdateTDO(document);
+    })
+  );
+
+  // Register Teacher Feature: Modèle de sujet d'examen / devoir
+  context.subscriptions.push(
+    vscode.commands.registerCommand('algorithme.createExamTemplate', createExamTemplate)
+  );
+
+  // Register Teacher Feature: Vérification de conformité Baccalauréat
+  context.subscriptions.push(
+    vscode.commands.registerCommand('algorithme.checkBacCompliance', async (fileUri?: vscode.Uri) => {
+      let document: vscode.TextDocument | undefined;
+      if (fileUri && fileUri.fsPath) {
+        document = await vscode.workspace.openTextDocument(fileUri);
+      } else if (vscode.window.activeTextEditor) {
+        document = vscode.window.activeTextEditor.document;
+      }
+      if (!document) {
+        vscode.window.showWarningMessage("Veuillez ouvrir un fichier d'algorithme (.alg) à vérifier.");
+        return;
+      }
+      await checkBacCompliance(document);
+    })
   );
 
   // --- Auto-replacement on type & Auto-closing of blocks ---

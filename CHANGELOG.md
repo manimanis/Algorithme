@@ -4,6 +4,73 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
+## [2.0.4] - 2026-11-07
+
+### Fixed
+- **Vérification de conformité Baccalauréat (`checkBacCompliance`)** :
+  - **Prise en charge de la nature des sous-programmes** : Les entrées déclarées comme `Procédure` ou `Fonction` dans la colonne `Type/Nature` du TDO / TDOG / TDOL ne sont plus traitées comme des types de données inconnus. L'outil vérifie plutôt qu'elles correspondent bien à des sous-programmes définis dans l'algorithme.
+  - **Support des types personnalisés TDNT** : Les types déclarés dans le `TDNT` (ex: `Tab1`) sont désormais reconnus comme des types valides pour les variables dans le TDO.
+  - **Vérification multi-blocs globale** : L'analyse de conformité examine l'exhaustivité des déclarations d'objets sur l'ensemble des blocs (algorithme principal et sous-programmes) et affiche un rapport détaillé et sans faux positifs.
+
+---
+
+## [2.0.3] - 2026-11-07
+
+### Fixed
+- **Exclusion stricte des mots-clés de structures du TDO** :
+  - Ajout des mots isolés `tant` et `que` aux mots réservés pour empêcher que `Tant` ou `que` (dans `Tant que ... Faire`) ne soient pris pour des variables non déclarées dans le TDO/TDOL.
+  - Pré-nettoyage systématique des structures `Tant que`, `Fin Tant que`, `Fin Si`, `Fin Pour`, `Fin Selon` avant l'analyse des tokens.
+  - Enrichissement de la liste des mots réservés (`const`, `constante`, `renvoyer`, `afficher`, etc.).
+
+---
+
+## [2.0.2] - 2026-11-07
+
+### Fixed
+- **Unification des outils d'exécution dans le menu déroulant (`editor/title/run`)** :
+  - Harmonisation du groupe sous `"navigation"` pour regrouper « Interpréter l'algorithme », « Compiler en exécutable » et « Transpiler en Python » au sein d'un seul bouton déroulant / *split button* standard de VS Code.
+  - Suppression définitive des icônes parasites multiples (`▷` et `<file-code>`) qui encombraient la barre de titre de l'éditeur.
+- **Détection Unicode & Mots réservés dans le TDO** :
+  - Remplacement de l'extraction de tokens ASCII par une correspondance Unicode complète (`\p{L}`).
+  - Résolution du bug où les mots accentués tels que `Répéter` étaient découpés en fausses variables (`R`, `p`, `ter`) et `Jusqu'à` en `Jusqu`.
+  - Exclusion stricte des mots-clés `repeter`, `répéter`, `jusqu`, `jusqua`, `jusqu'a`, `jusqu'à`, ainsi que des fermetures composées (`Fin Si`, `Fin Pour`, `Fin Tant Que`).
+- **Gestion stricte des paramètres formels** :
+  - Les paramètres d'en-tête de sous-programmes (ex: `@n: entier` dans `Saisir(@n: entier)`) ne sont plus ajoutés au TDO/TDOL.
+  - Notification claire à l'utilisateur lorsque tous les objets d'une procédure ou fonction sont déjà déclarés ou sont des paramètres.
+
+---
+
+## [2.0.1] - 2026-11-07
+
+### Fixed
+- **Navigation (Ctrl+Clic / `F12`) vers les sous-programmes** :
+  - La navigation redirige désormais en priorité absolue vers l'implémentation du sous-programme (`Procédure ...` ou `Fonction ...`) et non vers sa déclaration dans le tableau TDO/TDOG.
+- **Survol (*Hover*) des sous-programmes** :
+  - Affichage de la signature officielle, de la documentation et des paramètres du sous-programme même s'il est également déclaré dans le TDOG / TDOL.
+- **Génération automatique du TDO / TDOG affinée** :
+  - Détection circonscrite strictement aux blocs d'instructions exécutables entre `Début` et `Fin` (exclusion des en-têtes de tableaux `TDNT`, `TDOG`, `TDO` et des types personnalisés comme `Tab1`).
+  - Détection et ajout automatique des sous-programmes appelés dans l'algorithme mais manquants dans le TDOG (ex : `Remplir : Procédure`).
+  - Exclusion des doublons dans l'autocomplétion des variables pour les entrées sous-programmes du TDO.
+
+---
+
+## [2.0.0] - 2026-11-07
+
+### Added
+- **Navigation & Productivité LSP (Architecture native 100% en mémoire, 0 latence)** :
+  - **Plan de l'algorithme (*Document Symbols / Outline*)** : Affichage hiérarchique dans la vue Plan de la barre latérale de VS Code et via `Ctrl+Shift+O` (Algorithme principal, Fonctions, Procédures, Tableaux TDO, TDOL, TDOG, TDNT avec leurs variables et types respectifs).
+  - **Aller à la définition (`F12` / `Ctrl+Clic`)** : Saut instantané depuis n'importe quelle variable dans le code vers sa ligne de déclaration dans le TDO/TDNT, et vers la définition des fonctions et procédures.
+  - **Survol informatif (*Hover Provider*)** : Infobulles détaillées au survol d'une variable (`nom : type [TDO]`), d'un sous-programme (signature, paramètres, doc) ou d'un mot-clé algorithmique (explications pédagogiques).
+  - **Autocomplétion des variables déclarées dans le TDO** : Proposition automatique de toutes les variables du TDO au fur et à mesure de la saisie dans le corps de l'algorithme.
+- **Assistants & Automatisation Intelligente** :
+  - **Générateur automatique / Mise à jour du TDO (`algorithme.generateTDO`)** : Analyse statique en mémoire du code, détection des variables utilisées, inférence intelligente de leurs types probables (d'après les affectations, `Pour`, `Lire`, calculs) et génération ou ajout automatique des variables manquantes au TDO.
+  - **Actions Rapides (💡 Quick Fix / `Ctrl+.`)** : Proposition automatique d'ajouter les variables manquantes ou de générer le TDO en un clic dès qu'une variable non déclarée est détectée.
+- **Export & Outils pour Enseignants & Élèves** :
+  - **Générateur de Sujets de Devoir / Examen (`algorithme.createExamTemplate`)** : Commande pour créer en un clic un modèle complet d'épreuve conforme aux normes institutionnelles du Ministère de l'Éducation Tunisien (en-tête officiel, lycée, année scolaire, épreuve, durée, cadre TDO pré-rempli).
+  - **Vérification de Conformité Baccalauréat (`algorithme.checkBacCompliance` / touche `F7`)** : Analyse statique instantanée vérifiant la conformité stricte avec le programme officiel du Bac tunisien (présence du TDO, déclaration de toutes les variables, détection de fonctions interdites issues d'autres langages comme `print` ou `len`, validation des types), avec affichage d'un rapport clair côté à côte.
+
+---
+
 ## [1.9.1] - 2026-11-06
 
 ### Changed

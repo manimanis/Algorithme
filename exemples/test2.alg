@@ -6,19 +6,15 @@ Début
   Ecrire("x = ", x)
 Fin
 
-TDNT
-Tab1 = Tableau de 50 entier
-
 TDOG
 Objet : Type/Nature
-n : entier
-t : Tab1
+n, t, x : entier
 Saisir : Procédure
+Remplir : Procédure
 Calc : Fonction
 
-TDOG
-Objet : Type/Nature
-var : type
+TDNT
+Tab1 = Tableau de 50 entier
 
 Procédure Saisir(@n: entier)
 Début
@@ -76,6 +72,6 @@ Procédure Saisir2(@a: entier, deb: entier, fin: entier)
 Début
   Répéter
   Ecrire("Donner", deb "≤ n ≤", fin, " ? ")
-  Lire(n)
-Jusqu'à deb ≤ n ≤ fin
+  Lire(a)
+Jusqu'à deb ≤ a ≤ fin
 Fin

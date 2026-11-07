@@ -4,7 +4,7 @@
   <img src="icon.png" width="128" height="128" alt="Logo Algorithme Tunisien" />
 </p>
 
-[![Version](https://img.shields.io/badge/version-1.9.1-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-2.0.1-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.
@@ -12,6 +12,34 @@ Une extension VS Code complète et moderne pour le langage **Algorithme** — le
 ---
 
 ## 🌟 Fonctionnalités Principales
+
+### 🧭 Navigation & Productivité LSP (100% Mémoire, 0 latence)
+L'extension intègre des fonctionnalités de langage avancées conformes aux standards professionnels du *Language Server Protocol* (LSP), fonctionnant instantanément en mémoire locale :
+- **Plan du document (*Outline*)** : Visualisez l'arborescence complète de votre algorithme dans la vue **Plan** de la barre latérale ou via `Ctrl+Shift+O` (algorithme, sous-programmes, tableaux TDO/TDNT avec leurs variables et types respectifs).
+- **Aller à la définition (`F12` / `Ctrl+Clic`)** : Sautez instantanément depuis une variable dans le code vers sa déclaration dans le TDO, ou depuis un appel vers la définition de la fonction ou de la procédure correspondante.
+- **Survol informatif (*Hover*)** : Survolez n'importe quelle variable pour afficher son type et son emplacement dans le TDO, ou un sous-programme pour consulter sa signature et sa documentation.
+- **Autocomplétion des variables TDO** : Les variables déclarées dans le TDO sont automatiquement suggérées dès la frappe dans le corps de l'algorithme.
+
+---
+
+### 🪄 Assistant TDO Automatique (Génération & Synchronisation)
+Ne perdez plus de temps à rédiger ou synchroniser votre tableau de déclaration des objets :
+- **Génération automatique** : L'extension analyse le corps de votre algorithme, détecte toutes les variables utilisées et infère intelligemment leurs types (`entier`, `réel`, `chaîne`, `booléen`, `caractère`).
+- **Mise à jour incrémentale** : Si le TDO existe déjà, l'assistant y ajoute automatiquement les nouvelles variables manquantes sans toucher aux déclarations existantes.
+- **Action Rapide (Quick Fix 💡)** : Accessible en un clic sur l'ampoule ou via `Ctrl+.` dès qu'une variable non déclarée est détectée, ou via la commande *« Algorithme : Générer / Mettre à jour le TDO »*.
+
+---
+
+### 🎓 Outils Enseignants & Conformité Baccalauréat
+Des outils conçus sur mesure pour les professeurs et les élèves préparant l'épreuve pratique ou théorique du Baccalauréat :
+- **Générateur de Sujets de Devoir / Examen** : Crée en un clic un modèle d'épreuve officiel prêt à l'emploi (en-tête officiel du Ministère de l'Éducation Tunisien, Lycée, Année scolaire, Durée, Cadre énoncé, squelette d'algorithme et tableau TDO/TDNT formatés).
+- **Vérificateur de Conformité Bac (`F7`)** : Analyse statique instantanée qui inspecte votre algorithme et génère un rapport clair côte à côte validant :
+  - La présence et la validité de l'entête et des blocs principaux.
+  - La présence obligatoire et la complétude du TDO (toutes les variables déclarées).
+  - L'absence de fonctions étrangères interdites issues d'autres langages (`print`, `input`, `len`, `sqrt`, etc.) avec suggestion immédiate de l'équivalent officiel tunisien (`Ecrire`, `Lire`, `Long`, `Racine`).
+  - La conformité des types de données au programme officiel.
+
+---
 
 ### ⚡ Suite d'Outils Unifiée : Interpréter, Compiler & Transpiler
 L'extension intègre une suite d'outils complète directement reliée au compilateur officiel `algo.exe`. Tous les outils sont regroupés dans **un menu déroulant unique `[ ▶ ˅ ]`** dans la barre de titre de l'éditeur ainsi que dans le sous-menu contextuel **« Algorithme »** (clic droit dans l'éditeur ou dans l'explorateur) :
@@ -222,9 +250,11 @@ Appuyez sur `Ctrl+Shift+V` pour afficher l'aperçu avec le tableau TDO formaté,
 | **`F5`** | **`F5`** | **Interpréter l'algorithme** dans le terminal interactif (mode par défaut) |
 | **`Ctrl+F5`** | **`Ctrl+F5`** | **Compiler en exécutable autonome (.exe)** via `algo.exe --build-exe` |
 | **`Shift+F5`** | **`Shift+F5`** | **Transpiler en Python 3** via `algo.exe --to-python` |
+| **`F7`** | **`F7`** | **Vérifier la conformité Baccalauréat** (rapport pédagogique instantané) |
+| **`F12`** | **`F12`** | **Aller à la définition** d'une variable (TDO) ou d'un sous-programme |
 | **`Ctrl+Shift+V`** | **`Cmd+Shift+V`** | Ouvrir / afficher le volet d'aperçu dynamique (TDO/TDNT) |
 | **`Shift+Alt+F`** | **`Shift+Option+F`** | Formater et indenter automatiquement le document |
-| **`Ctrl+.`** | **`Cmd+.`** | Actions rapides (Quick Fix / fermer un bloc manquant) |
+| **`Ctrl+.`** | **`Cmd+.`** | Actions rapides (Quick Fix / fermer un bloc / générer le TDO) |
 
 ---
 

@@ -2,7 +2,7 @@
   "name": "tunisian-algorithms-highlighter",
   "displayName": "Extension pour l'Algorithme Tunisien",
   "description": "Syntax highlighting, operator auto-replacement and preview with TDO/TDNT tables for the Algorithme language",
-  "version": "1.9.1",
+  "version": "2.0.4",
   "publisher": "mohamedanismani",
   "icon": "icon.png",
   "license": "MIT",
@@ -18,7 +18,10 @@
     "onCommand:algorithme.run",
     "onCommand:algorithme.compileExe",
     "onCommand:algorithme.toPython",
-    "onCommand:algorithme.showPreview"
+    "onCommand:algorithme.showPreview",
+    "onCommand:algorithme.generateTDO",
+    "onCommand:algorithme.createExamTemplate",
+    "onCommand:algorithme.checkBacCompliance"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -46,6 +49,24 @@
         "title": "Algorithme : Ouvrir l'aperçu (avec tableaux TDO/TDNT)",
         "shortTitle": "Aperçu",
         "icon": "$(open-preview)"
+      },
+      {
+        "command": "algorithme.generateTDO",
+        "title": "Algorithme : Générer / Mettre à jour le TDO",
+        "shortTitle": "Générer / Compléter le TDO",
+        "icon": "$(table)"
+      },
+      {
+        "command": "algorithme.checkBacCompliance",
+        "title": "Algorithme : Vérifier la conformité Baccalauréat",
+        "shortTitle": "Vérification Bac",
+        "icon": "$(pass)"
+      },
+      {
+        "command": "algorithme.createExamTemplate",
+        "title": "Algorithme : Créer un modèle de Devoir / Examen",
+        "shortTitle": "Nouveau modèle de Devoir",
+        "icon": "$(file-text)"
       }
     ],
     "submenus": [
@@ -67,17 +88,17 @@
         {
           "command": "algorithme.run",
           "when": "editorLangId == algorithme",
-          "group": "1_run@1"
+          "group": "navigation@1"
         },
         {
           "command": "algorithme.compileExe",
           "when": "editorLangId == algorithme",
-          "group": "1_run@2"
+          "group": "navigation@2"
         },
         {
           "command": "algorithme.toPython",
           "when": "editorLangId == algorithme",
-          "group": "1_run@3"
+          "group": "navigation@3"
         }
       ],
       "editor/context": [
@@ -108,8 +129,16 @@
           "group": "1_tools@3"
         },
         {
+          "command": "algorithme.generateTDO",
+          "group": "2_assistant@1"
+        },
+        {
+          "command": "algorithme.checkBacCompliance",
+          "group": "2_assistant@2"
+        },
+        {
           "command": "algorithme.showPreview",
-          "group": "2_preview@1"
+          "group": "3_preview@1"
         }
       ]
     },
@@ -127,6 +156,11 @@
       {
         "command": "algorithme.toPython",
         "key": "shift+f5",
+        "when": "editorLangId == algorithme"
+      },
+      {
+        "command": "algorithme.checkBacCompliance",
+        "key": "f7",
         "when": "editorLangId == algorithme"
       },
       {
