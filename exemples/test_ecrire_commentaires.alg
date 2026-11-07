@@ -5,9 +5,6 @@ Début
   Retourner (note1 + note2) / 2
 Fin
 
-TDOL
-Objet : Type/Nature
-
 Algorithme TestEcrireEtCommentaires
 Début
   /* Démonstration :
@@ -32,3 +29,6 @@ TDO
 Objet : Type/Nature
 m, m1 : Réel
 CalculerMoyenne : Fonction
+
+
+

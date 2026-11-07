@@ -71,7 +71,7 @@ s, i : entier
 Procédure Saisir2(@a: entier, deb: entier, fin: entier)
 Début
   Répéter
-  Ecrire("Donner", deb "≤ n ≤", fin, " ? ")
-  Lire(a)
-Jusqu'à deb ≤ a ≤ fin
+    Ecrire("Donner", deb "≤ n ≤", fin, " ? ")
+    Lire(a)
+  Jusqu'à deb ≤ a ≤ fin
 Fin

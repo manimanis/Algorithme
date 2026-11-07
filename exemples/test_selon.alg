@@ -31,6 +31,5 @@ Fin
 
 TDO
 Objet : Type/Nature
-dt : chaîne
-j,m,a : entier
-j1,m1,a1,nbjour : entier
+dt, j1, m1, a1, nbjour : entier
+j, m : chaîne

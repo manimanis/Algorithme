@@ -188,7 +188,7 @@ class AlgorithmeDocumentSymbolProvider {
             if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('/*'))
                 continue;
             // 1. Algorithme header
-            const algoMatch = trimmed.match(/^Algorithme\s+([a-zA-Z_]\w*)/i);
+            const algoMatch = trimmed.match(/^Algorithme\s+([\p{L}_][\p{L}\p{N}_]*)/iu);
             if (algoMatch) {
                 const fullRange = new vscode.Range(i, 0, document.lineCount - 1, 0);
                 mainAlgoSymbol = new vscode.DocumentSymbol(algoMatch[1], 'Algorithme principal', vscode.SymbolKind.Package, fullRange, line.range);
@@ -196,14 +196,14 @@ class AlgorithmeDocumentSymbolProvider {
                 continue;
             }
             // 2. Subprograms: Fonction or Procédure
-            const fnMatch = trimmed.match(/^Fonction\s+([a-zA-Z_]\w*)/i);
+            const fnMatch = trimmed.match(/^Fonction\s+([\p{L}_][\p{L}\p{N}_]*)/iu);
             if (fnMatch) {
                 const fnSym = new vscode.DocumentSymbol(fnMatch[1], trimmed, vscode.SymbolKind.Function, line.range, line.range);
                 symbols.push(fnSym);
                 currentSubprogramSymbol = fnSym;
                 continue;
             }
-            const procMatch = trimmed.match(/^Proc[eé]dure\s+([a-zA-Z_]\w*)/i);
+            const procMatch = trimmed.match(/^Proc[eé]dure\s+([\p{L}_][\p{L}\p{N}_]*)/iu);
             if (procMatch) {
                 const procSym = new vscode.DocumentSymbol(procMatch[1], trimmed, vscode.SymbolKind.Method, line.range, line.range);
                 symbols.push(procSym);

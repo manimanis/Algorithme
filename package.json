@@ -2,7 +2,7 @@
   "name": "tunisian-algorithms-highlighter",
   "displayName": "Extension pour l'Algorithme Tunisien",
   "description": "Syntax highlighting, operator auto-replacement and preview with TDO/TDNT tables for the Algorithme language",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "publisher": "mohamedanismani",
   "icon": "icon.png",
   "license": "MIT",
@@ -201,7 +201,11 @@
           ".algo",
           ".algorithme"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/algo-light.png",
+          "dark": "./icons/algo-dark.png"
+        }
       }
     ],
     "grammars": [

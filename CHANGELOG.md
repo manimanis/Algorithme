@@ -4,6 +4,27 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
+## [2.0.5] - 2026-11-07
+
+### Added
+- **Icône personnalisée pour les fichiers d'algorithmes** :
+  - Intégration de l'icône dédiée `.algo` pour les fichiers `.alg`, `.algo` et `.algorithme` directement dans l'explorateur VS Code (`contributes.languages[].icon`).
+  - Ajout des versions optimisées et détourées haute résolution dans `icons/` (`algo.png`, `algo-light.png`, `algo-dark.png` et `algorithme.ico`).
+
+### Fixed
+- **Génération du TDO (Assistant TDO)** :
+  - **Prise en charge universelle de l'ordre des blocs** : Détection correcte de la portée active quel que soit l'agencement des sous-programmes et de l'algorithme principal dans le document (sous-programmes placés en tête de fichier avant l'algorithme principal, ou après celui-ci).
+  - **Prise en charge des commentaires multi-lignes (`/* ... */`)** : Suivi rigoureux de l'état des commentaires de bloc ligne par ligne pour empêcher que le texte d'un commentaire multi-lignes ne soit pris pour des variables à déclarer.
+  - **Support Unicode pour les types de retour de fonctions** : Remplacement des expressions régulières ASCII par des classes de caractères Unicode (`\p{L}`) dans la détection des sous-programmes, résolvant la troncature des types accentués (`Réel` n'est plus tronqué en `R`, `Chaîne` en `Cha`, etc.).
+  - **Exclusion des paramètres nommés de fonctions** : Suppression automatique des arguments nommés tels que `sep=` et `fin=` (dans `Ecrire(...)`) et ajout de `sep` aux mots-clés réservés pour éviter sa déclaration en tant qu'objet du TDO.
+- **Coloration syntaxique dans l'aperçu** :
+  - Résolution d'un décalage de capture dans le tokenizer regex qui provoquait la coloration en mot-clé bleu gras de tous les identifiants (noms d'algorithmes, variables, champs d'enregistrements `nom`, `moyenne`) et affichait `Fin Pour` en italique.
+  - Ajout de la coloration des constantes numériques (entiers et réels en vert).
+  - Prise en charge des mots-clés `A` et `À` dans les boucles `Pour ... De ... A ... Faire`.
+  - Prise en charge des paramètres nommés (`sep=`, `fin=`) et des passages par référence (`@n`).
+
+---
+
 ## [2.0.4] - 2026-11-07
 
 ### Fixed

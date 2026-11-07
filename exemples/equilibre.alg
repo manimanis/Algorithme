@@ -13,6 +13,7 @@ Fin
 
 TDOL
 Objet : Type/Nature
+s : entier
 i, p : entier
 
 Procédure Afficher_Equilibre(T: TAB, n: entier)
@@ -35,13 +36,15 @@ Fin
 TDOL
 Objet : Type/Nature
 test : booléen
-k, sd, sg : entier
+k, sg, sd : entier
+Somme_Intervalle : Fonction
 
 Algorithme NomAlgorithme
 Début
   Répéter
     Ecrire("Donner n ? ") ; Lire(N)
   Jusqu'à 2 ≤ N ≤ 100
+  s ← 0
   Pour i de 1 à N Faire
     Si N mod i = 0 Alors
       s ← s + i
@@ -51,4 +54,5 @@ Fin
 
 TDO
 Objet : Type/Nature
+s : entier
 i, N : entier

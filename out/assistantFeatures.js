@@ -50,7 +50,7 @@ const RESERVED_KEYWORDS = new Set([
     'type', 'var', 'const', 'constante', 'procedure', 'procédure', 'fonction', 'enregistrement', 'fichier', 'tableau', 'matrice',
     'entier', 'réel', 'reel', 'booléen', 'booleen', 'caractère', 'caractere', 'chaîne', 'chaine',
     'tdo', 'tdol', 'tdog', 'tdnt', 'objet', 'nature', 'definition', 'définition',
-    'ecrire', 'lire', 'afficher'
+    'ecrire', 'lire', 'afficher', 'sep'
 ]);
 /**
  * Parses all scopes (main algorithm and each subprogram) in the document.
@@ -58,125 +58,84 @@ const RESERVED_KEYWORDS = new Set([
 function parseScopeBlocks(document) {
     const scopes = [];
     const allTdo = (0, lspFeatures_1.parseTdoEntries)(document);
-    const subprograms = (0, subprogramCompletion_1.getUserSubprograms)(document);
-    // 1. Identify subprogram blocks
-    const subBlocks = [];
+    const headers = [];
     for (let i = 0; i < document.lineCount; i++) {
         const raw = document.lineAt(i).text.trim();
-        const match = raw.match(/^(?:(Proc[eé]dure)|(Fonction))\s+([\p{L}_][\p{L}\p{N}_]*)\s*(?:\(([^)]*)\))?/iu);
-        if (match) {
-            const isProc = Boolean(match[1]);
-            const name = match[3];
-            const rawParams = match[4] || '';
+        // Subprogram: Fonction or Procédure
+        const subMatch = raw.match(/^(?:(Proc[eé]dure)|(Fonction))\s+([\p{L}_][\p{L}\p{N}_]*)\s*(?:\(([^)]*)\))?/iu);
+        if (subMatch) {
+            const name = subMatch[3];
+            const rawParams = subMatch[4] || '';
             const params = rawParams
                 .split(/[;,]/)
                 .map(p => p.trim().replace(/^@/, '').split(':')[0].trim())
                 .filter(p => /^[\p{L}_][\p{L}\p{N}_]*$/u.test(p))
                 .map(p => p.toLowerCase());
-            subBlocks.push({
+            headers.push({
+                kind: 'subprogram',
                 name,
-                kind: isProc ? 'procedure' : 'function',
-                headerLine: i,
+                line: i,
                 params
             });
+            continue;
+        }
+        // Main algorithm: Algorithme <Nom>
+        const algoMatch = raw.match(/^Algorithme\s+([\p{L}_][\p{L}\p{N}_]*)/iu);
+        if (algoMatch) {
+            headers.push({
+                kind: 'main',
+                name: algoMatch[1] || 'Algorithme Principal',
+                line: i,
+                params: []
+            });
+            continue;
         }
     }
-    // 2. Main Algorithm scope
-    let mainAlgoStart = 0;
-    let mainAlgoDebut = -1;
-    let mainAlgoFin = -1;
-    for (let i = 0; i < document.lineCount; i++) {
-        const raw = document.lineAt(i).text.trim();
-        if (/^Algorithme\s+/i.test(raw)) {
-            mainAlgoStart = i;
-        }
-        else if (mainAlgoDebut === -1 && /^(d[eé]but)\b/iu.test(raw)) {
-            mainAlgoDebut = i;
-        }
-        else if (mainAlgoDebut !== -1 && mainAlgoFin === -1) {
-            const isFin = /^fin(?:\s+[\p{L}_][\p{L}\p{N}_]*)?\s*$/iu.test(raw) && !/^fin\s*(?:si|pour|tant|selon)\b/iu.test(raw);
-            if (isFin) {
-                mainAlgoFin = i;
-                break;
-            }
-        }
-    }
-    const firstSubLine = subBlocks.length > 0 ? subBlocks[0].headerLine : document.lineCount;
-    // Find the table associated with the main algorithm (before first subprogram)
-    let mainTableName = 'TDO';
-    let mainTableHeaderLine = -1;
-    let mainTableInsertLine = -1;
-    for (let i = (mainAlgoFin >= 0 ? mainAlgoFin : mainAlgoStart); i < firstSubLine; i++) {
-        const raw = document.lineAt(i).text.trim();
-        const tm = raw.match(/^(TDOG|TDO)\b/i);
-        if (tm) {
-            mainTableName = tm[1].toUpperCase();
-            mainTableHeaderLine = i;
-            // Skip header line (e.g. "Objet : Type/Nature")
-            let nextLine = i + 1;
-            while (nextLine < firstSubLine) {
-                const nextText = document.lineAt(nextLine).text.trim();
-                if (/^\|?\s*objet\s*[:|]/i.test(nextText) || /^[\+\-\|─┌┬┐├┼┤└┴┘╔╦╗╠╬╣╚╩╝═║\s]+$/.test(nextText)) {
-                    nextLine++;
-                    continue;
-                }
-                break;
-            }
-            mainTableInsertLine = nextLine;
-            break;
-        }
-    }
-    const mainDeclared = new Set();
-    for (const entry of allTdo) {
-        if (mainTableHeaderLine >= 0 && entry.line >= mainTableHeaderLine && entry.line < firstSubLine) {
-            mainDeclared.add(entry.name.toLowerCase());
-        }
-    }
-    if (mainAlgoDebut !== -1 && mainAlgoFin !== -1) {
-        scopes.push({
+    // If no "Algorithme <Nom>" header was found, find the main algorithm's start
+    const hasMain = headers.some(h => h.kind === 'main');
+    if (!hasMain) {
+        headers.push({
             kind: 'main',
             name: 'Algorithme Principal',
-            startLine: mainAlgoStart,
-            endLine: firstSubLine - 1,
-            debutLine: mainAlgoDebut,
-            finLine: mainAlgoFin,
-            tableName: mainTableName,
-            tableHeaderLine: mainTableHeaderLine,
-            tableInsertLine: mainTableInsertLine,
-            declaredSet: mainDeclared,
-            formalParams: new Set()
+            line: 0,
+            params: []
         });
     }
-    // 3. Subprogram scopes
-    for (let idx = 0; idx < subBlocks.length; idx++) {
-        const sub = subBlocks[idx];
-        const nextSubLine = idx + 1 < subBlocks.length ? subBlocks[idx + 1].headerLine : document.lineCount;
-        let subDebut = -1;
-        let subFin = -1;
-        for (let i = sub.headerLine; i < nextSubLine; i++) {
+    // Sort all headers by line number
+    headers.sort((a, b) => a.line - b.line);
+    // 2. Build each scope block
+    for (let idx = 0; idx < headers.length; idx++) {
+        const h = headers[idx];
+        const startLine = h.line;
+        const nextHeaderLine = idx + 1 < headers.length ? headers[idx + 1].line : document.lineCount;
+        const endLine = nextHeaderLine - 1;
+        let debutLine = -1;
+        let finLine = -1;
+        for (let i = startLine; i < nextHeaderLine; i++) {
             const raw = document.lineAt(i).text.trim();
-            if (subDebut === -1 && /^(d[eé]but)\b/iu.test(raw)) {
-                subDebut = i;
+            if (debutLine === -1 && /^(d[eé]but)\b/iu.test(raw)) {
+                debutLine = i;
             }
-            else if (subDebut !== -1 && subFin === -1) {
+            else if (debutLine !== -1 && finLine === -1) {
                 const isFin = /^fin(?:\s+[\p{L}_][\p{L}\p{N}_]*)?\s*$/iu.test(raw) && !/^fin\s*(?:si|pour|tant|selon)\b/iu.test(raw);
                 if (isFin) {
-                    subFin = i;
+                    finLine = i;
                     break;
                 }
             }
         }
-        let subTableName = 'TDOL';
-        let subTableHeaderLine = -1;
-        let subTableInsertLine = -1;
-        for (let i = (subFin >= 0 ? subFin : sub.headerLine); i < nextSubLine; i++) {
+        // Search for table in [finLine >= 0 ? finLine : startLine, nextHeaderLine]
+        let tableName = h.kind === 'main' ? 'TDO' : 'TDOL';
+        let tableHeaderLine = -1;
+        let tableInsertLine = -1;
+        for (let i = (finLine >= 0 ? finLine : startLine); i < nextHeaderLine; i++) {
             const raw = document.lineAt(i).text.trim();
-            const tm = raw.match(/^(TDOL|TDO)\b/i);
+            const tm = raw.match(/^(TDOG|TDOL|TDO)\b/i);
             if (tm) {
-                subTableName = tm[1].toUpperCase();
-                subTableHeaderLine = i;
+                tableName = tm[1].toUpperCase();
+                tableHeaderLine = i;
                 let nextLine = i + 1;
-                while (nextLine < nextSubLine) {
+                while (nextLine < nextHeaderLine) {
                     const nextText = document.lineAt(nextLine).text.trim();
                     if (/^\|?\s*objet\s*[:|]/i.test(nextText) || /^[\+\-\|─┌┬┐├┼┤└┴┘╔╦╗╠╬╣╚╩╝═║\s]+$/.test(nextText)) {
                         nextLine++;
@@ -184,29 +143,29 @@ function parseScopeBlocks(document) {
                     }
                     break;
                 }
-                subTableInsertLine = nextLine;
+                tableInsertLine = nextLine;
                 break;
             }
         }
-        const subDeclared = new Set();
+        const declaredSet = new Set();
         for (const entry of allTdo) {
-            if (subTableHeaderLine >= 0 && entry.line >= subTableHeaderLine && entry.line < nextSubLine) {
-                subDeclared.add(entry.name.toLowerCase());
+            if (tableHeaderLine >= 0 && entry.line >= tableHeaderLine && entry.line < nextHeaderLine) {
+                declaredSet.add(entry.name.toLowerCase());
             }
         }
-        if (subDebut !== -1 && subFin !== -1) {
+        if (debutLine !== -1 && finLine !== -1) {
             scopes.push({
-                kind: 'subprogram',
-                name: sub.name,
-                startLine: sub.headerLine,
-                endLine: nextSubLine - 1,
-                debutLine: subDebut,
-                finLine: subFin,
-                tableName: subTableName,
-                tableHeaderLine: subTableHeaderLine,
-                tableInsertLine: subTableInsertLine,
-                declaredSet: subDeclared,
-                formalParams: new Set(sub.params)
+                kind: h.kind,
+                name: h.name,
+                startLine,
+                endLine,
+                debutLine,
+                finLine,
+                tableName,
+                tableHeaderLine,
+                tableInsertLine,
+                declaredSet,
+                formalParams: new Set(h.params)
             });
         }
     }
@@ -235,12 +194,72 @@ function getActiveScope(document, cursorLine) {
 function detectUndeclaredItemsInScope(document, scope, tdntTypes, userSubMap, builtinSubNames) {
     const missingVariablesMap = new Map();
     const missingSubprogramsMap = new Map();
+    // Track multi-line block comment state from document start up to this scope
+    let inBlockComment = false;
+    for (let i = 0; i <= scope.debutLine; i++) {
+        let line = document.lineAt(i).text;
+        while (true) {
+            if (inBlockComment) {
+                const endCommentIdx = line.indexOf('*/');
+                if (endCommentIdx !== -1) {
+                    line = line.substring(endCommentIdx + 2);
+                    inBlockComment = false;
+                }
+                else {
+                    break;
+                }
+            }
+            else {
+                const startCommentIdx = line.indexOf('/*');
+                if (startCommentIdx !== -1) {
+                    const endCommentIdx = line.indexOf('*/', startCommentIdx + 2);
+                    if (endCommentIdx !== -1) {
+                        line = line.substring(0, startCommentIdx) + ' ' + line.substring(endCommentIdx + 2);
+                    }
+                    else {
+                        inBlockComment = true;
+                        break;
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+    }
     // Scan ONLY between Début and Fin of this scope
     for (let i = scope.debutLine + 1; i < scope.finLine; i++) {
         let line = document.lineAt(i).text;
-        // Strip comments
+        // Handle multi-line block comments /* ... */
+        if (inBlockComment) {
+            const endCommentIdx = line.indexOf('*/');
+            if (endCommentIdx !== -1) {
+                line = line.substring(endCommentIdx + 2);
+                inBlockComment = false;
+            }
+            else {
+                continue;
+            }
+        }
+        while (true) {
+            const startCommentIdx = line.indexOf('/*');
+            if (startCommentIdx !== -1) {
+                const endCommentIdx = line.indexOf('*/', startCommentIdx + 2);
+                if (endCommentIdx !== -1) {
+                    line = line.substring(0, startCommentIdx) + ' ' + line.substring(endCommentIdx + 2);
+                }
+                else {
+                    line = line.substring(0, startCommentIdx);
+                    inBlockComment = true;
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+        }
+        // Strip single-line comments
         line = line.replace(/\/\/.*$/, '');
-        line = line.replace(/\/\*.*?\*\//g, ' ');
         // Strip string literals and character literals
         line = line.replace(/"(?:[^"\\]|\\.)*"/g, '""');
         line = line.replace(/'(?:[^'\\]|\\.)*'/g, "''");
@@ -249,6 +268,7 @@ function detectUndeclaredItemsInScope(document, scope, tdntTypes, userSubMap, bu
         line = line.replace(/\bfin\s*(?:si|pour|tant\s*que|selon)\b/giu, ' ');
         line = line.replace(/\b(?:finsi|finpour|fintantque|finselon|tantque)\b/giu, ' ');
         line = line.replace(/\btant\s*que\b/giu, ' ');
+        line = line.replace(/\b(?:sep|fin)\s*=/giu, ' ');
         const trimmed = line.trim();
         if (!trimmed)
             continue;
@@ -397,6 +417,17 @@ function inferTypeFromExpression(expr, userSubs) {
         const fnName = fnCallMatch[1].toLowerCase();
         const sub = userSubs.get(fnName);
         if (sub && sub.returnType) {
+            const rtLower = sub.returnType.toLowerCase();
+            if (rtLower === 'reel' || rtLower === 'réel')
+                return 'Réel';
+            if (rtLower === 'entier')
+                return 'entier';
+            if (rtLower === 'chaine' || rtLower === 'chaîne')
+                return 'chaîne';
+            if (rtLower === 'booleen' || rtLower === 'booléen')
+                return 'booléen';
+            if (rtLower === 'caractere' || rtLower === 'caractère')
+                return 'caractère';
             return sub.returnType;
         }
     }
@@ -414,7 +445,7 @@ function inferTypeFromExpression(expr, userSubs) {
     }
     // Real
     if (/\//.test(expr) || /\b(racine|arrondi|exp|ln|log)\b/i.test(expr)) {
-        return 'réel';
+        return 'Réel';
     }
     // Integer
     if (/\b(div|mod|long|ord|ent|valeur|alea)\b/i.test(expr)) {
@@ -470,7 +501,7 @@ async function generateOrUpdateTDO(document) {
     }
     else {
         // Create a new table right after the finLine
-        const tableHeader = scope.kind === 'main' ? 'TDOG' : 'TDOL';
+        const tableHeader = scope.tableName || (scope.kind === 'main' ? 'TDO' : 'TDOL');
         const newTableText = `\n${tableHeader}\nObjet : Type/Nature\n${linesToAdd.join('\n')}\n`;
         const insertPos = new vscode.Position(scope.finLine + 1, 0);
         await editor.edit(builder => {

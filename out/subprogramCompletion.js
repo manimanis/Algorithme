@@ -134,7 +134,7 @@ exports.BUILTIN_SUBPROGRAMS = [
         params: [
             { name: 'ch', description: "Chaîne source." },
             { name: 'd', description: "Position de début (indice 0-indexé)." },
-            { name: 'f', description: "Position de fin (ou longueur selon convention)." }
+            { name: 'f', description: "Position de fin (non incluse)." }
         ],
         snippetBody: 'Sous_chaine(${1:ch}, ${2:debut}, ${3:fin})',
         description: "Extrait une sous-chaîne de caractères à partir de la position début."
@@ -346,8 +346,8 @@ exports.BUILTIN_SUBPROGRAMS = [
  */
 function getUserSubprograms(document) {
     const result = [];
-    const procRegex = /^\s*(?:Proc[eé]dure)\s+([a-zA-Z_][\w]*)\s*(?:\(([^)]*)\))?/i;
-    const funcRegex = /^\s*(?:Fonction)\s+([a-zA-Z_][\w]*)\s*(?:\(([^)]*)\))?\s*(?::\s*([a-zA-Z_][\w]*))?/i;
+    const procRegex = /^\s*(?:Proc[eé]dure)\s+([\p{L}_][\p{L}\p{N}_]*)\s*(?:\(([^)]*)\))?/iu;
+    const funcRegex = /^\s*(?:Fonction)\s+([\p{L}_][\p{L}\p{N}_]*)\s*(?:\(([^)]*)\))?\s*(?::\s*([\p{L}_][\p{L}\p{N}_]*))?/iu;
     for (let i = 0; i < document.lineCount; i++) {
         const line = document.lineAt(i).text.trim();
         if (!line || line.startsWith('//') || line.startsWith('/*'))

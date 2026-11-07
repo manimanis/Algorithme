@@ -965,8 +965,18 @@ function highlightAlgorithmeLine(line) {
     const indentLength = indentMatch ? indentMatch[1].length : 0;
     const indentHtml = '&nbsp;'.repeat(indentLength);
     const text = line.substring(indentLength);
+    const isPourLine = /^\s*pour\b/i.test(line);
     // Single-pass tokenizer
-    const tokenRegex = /(\/\/.*$)|(".*?")|(\b(?:fin\s*si|fin\s*(?:tant\s*que|tantque)|fin\s*pour|fin\s*selon|fin\s*enregistrement|fichier\s+texte|tant\s*que)\b)|((?<=^|[^\p{L}\p{N}_])(?:jusqu['’]à|jusqu['’]a|jusqua|jusqu_à)(?=[^\p{L}\p{N}_]|$))|((?<=[\s(])à(?=[\s)]|$))|([\p{L}_][\p{L}\p{N}_]*)|(\.\.|←|≤|≥|≠|∈|@)/giu;
+    // 1: comment (//...)
+    // 2: str ("..." or '...')
+    // 3: namedParam (\b(?:sep|fin)(?=\s*=))
+    // 4: multiKw (fin si, fin pour, etc.)
+    // 5: jusqua (jusqu'à, etc.)
+    // 6: refParam (@var)
+    // 7: number (\b\d+(?:\.\d+)?\b)
+    // 8: op (operators and symbols)
+    // 9: word (identifiers, keywords, types, functions)
+    const tokenRegex = /(\/\/.*$)|(".*?"|'.*?')|(\b(?:sep|fin)(?=\s*=))|(\b(?:fin\s*si|fin\s*(?:tant\s*que|tantque)|fin\s*pour|fin\s*selon|fin\s*enregistrement|fichier\s+texte|tant\s*que)\b)|((?<=^|[^\p{L}\p{N}_])(?:jusqu['’]à|jusqu['’]a|jusqua|jusqu_à)(?=[^\p{L}\p{N}_]|$))|(@[\p{L}_][\p{L}\p{N}_]*)|(\b\d+(?:\.\d+)?\b)|(\.\.|←|<-|<--|<=|>=|==|!=|<>|≤|≥|≠|∈|[\+\-\*\/%<>=])|([\p{L}_][\p{L}\p{N}_]*)/giu;
     let result = '';
     let lastIndex = 0;
     let match;
@@ -975,7 +985,7 @@ function highlightAlgorithmeLine(line) {
             result += escapeHtml(text.substring(lastIndex, match.index));
         }
         lastIndex = tokenRegex.lastIndex;
-        const [, comment, str, namedParam, multiKw, jusqua, prepA, word, op] = match;
+        const [, comment, str, namedParam, multiKw, jusqua, refParam, num, op, word] = match;
         if (comment !== undefined) {
             result += `<span class="comment" style="color:#008000;font-style:italic;"><font color="#008000"><i>${escapeHtml(comment)}</i></font></span>`;
         }
@@ -991,12 +1001,18 @@ function highlightAlgorithmeLine(line) {
         else if (jusqua !== undefined) {
             result += `<span class="keyword" style="color:#0000ff;font-weight:bold;"><font color="#0000ff"><b>${escapeHtml(jusqua)}</b></font></span>`;
         }
-        else if (prepA !== undefined) {
-            result += `<span class="keyword" style="color:#0000ff;font-weight:bold;"><font color="#0000ff"><b>${escapeHtml(prepA)}</b></font></span>`;
+        else if (refParam !== undefined) {
+            result += `<span class="parameter" style="color:#001080;font-style:italic;"><font color="#001080"><i>${escapeHtml(refParam)}</i></font></span>`;
+        }
+        else if (num !== undefined) {
+            result += `<span class="number" style="color:#098658;"><font color="#098658">${escapeHtml(num)}</font></span>`;
+        }
+        else if (op !== undefined) {
+            result += `<span class="operator" style="color:#d73a49;font-weight:bold;"><font color="#d73a49"><b>${escapeHtml(op)}</b></font></span>`;
         }
         else if (word !== undefined) {
             const lower = word.toLowerCase();
-            if (KEYWORDS_SET.has(lower)) {
+            if (KEYWORDS_SET.has(lower) || lower === 'à' || (isPourLine && lower === 'a')) {
                 result += `<span class="keyword" style="color:#0000ff;font-weight:bold;"><font color="#0000ff"><b>${escapeHtml(word)}</b></font></span>`;
             }
             else if (TYPES_SET.has(lower)) {
@@ -1008,9 +1024,6 @@ function highlightAlgorithmeLine(line) {
             else {
                 result += escapeHtml(word);
             }
-        }
-        else if (op !== undefined) {
-            result += `<span class="operator" style="color:#d73a49;font-weight:bold;"><font color="#d73a49"><b>${escapeHtml(op)}</b></font></span>`;
         }
     }
     if (lastIndex < text.length) {
@@ -1097,11 +1110,13 @@ function generateHtml(title, contentHtml, nonce, cspSource) {
             --comment-color: #008000;
             --function-color: #795e26;
             --operator-color: #d73a49;
+            --number-color: #098658;
+            --parameter-color: #001080;
         }
 
         html, body {
             margin: 0;
-            padding: 24px 32px;
+            padding: 8px;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -1204,6 +1219,20 @@ function generateHtml(title, contentHtml, nonce, cspSource) {
         body.dark-mode .operator font,
         body.dark-mode font[color="#d73a49"] {
             color: #d16969 !important;
+        }
+
+        body.dark-mode .number,
+        body.dark-mode .number[style],
+        body.dark-mode .number font,
+        body.dark-mode font[color="#098658"] {
+            color: #b5cea8 !important;
+        }
+
+        body.dark-mode .parameter,
+        body.dark-mode .parameter[style],
+        body.dark-mode .parameter font,
+        body.dark-mode font[color="#001080"] {
+            color: #9cdcfe !important;
         }
 
         .header-bar {

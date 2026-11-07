@@ -4,7 +4,7 @@
   <img src="icon.png" width="128" height="128" alt="Logo Algorithme Tunisien" />
 </p>
 
-[![Version](https://img.shields.io/badge/version-2.0.1-blue)](https://github.com/manimanis/Algorithme)
+[![Version](https://img.shields.io/badge/version-2.0.5-blue)](https://github.com/manimanis/Algorithme)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Une extension VS Code complète et moderne pour le langage **Algorithme** — le pseudocode algorithmique standard utilisé dans l'enseignement secondaire et universitaire de l'informatique en Tunisie.
@@ -24,9 +24,16 @@ L'extension intègre des fonctionnalités de langage avancées conformes aux sta
 
 ### 🪄 Assistant TDO Automatique (Génération & Synchronisation)
 Ne perdez plus de temps à rédiger ou synchroniser votre tableau de déclaration des objets :
-- **Génération automatique** : L'extension analyse le corps de votre algorithme, détecte toutes les variables utilisées et infère intelligemment leurs types (`entier`, `réel`, `chaîne`, `booléen`, `caractère`).
-- **Mise à jour incrémentale** : Si le TDO existe déjà, l'assistant y ajoute automatiquement les nouvelles variables manquantes sans toucher aux déclarations existantes.
+- **Génération automatique & multi-blocs** : L'extension analyse le corps de votre algorithme ou de vos sous-programmes, détecte toutes les variables utilisées et infère intelligemment leurs types (`entier`, `réel` / `Réel`, `chaîne`, `booléen`, `caractère`, types TDNT personnalisés).
+- **Détection universelle de la portée** : Fonctionne de manière fiable quel que soit l'agencement du fichier (sous-programmes déclarés avant ou après l'algorithme principal).
+- **Précision maximale** : Exclusion stricte des commentaires mono ou multi-lignes (`/* ... */`), des paramètres formels et des arguments nommés (`sep`, `fin`).
+- **Mise à jour incrémentale** : Si le TDO / TDOL existe déjà, l'assistant y ajoute automatiquement les nouvelles variables manquantes sans toucher aux déclarations existantes.
 - **Action Rapide (Quick Fix 💡)** : Accessible en un clic sur l'ampoule ou via `Ctrl+.` dès qu'une variable non déclarée est détectée, ou via la commande *« Algorithme : Générer / Mettre à jour le TDO »*.
+
+---
+
+### 🎨 Icône Dédiée pour les Fichiers d'Algorithmes
+L'extension associe automatiquement une icône élégante et officielle à tous vos fichiers `.alg`, `.algo` et `.algorithme` dans l'explorateur VS Code ainsi que dans les onglets de l'éditeur, pour une reconnaissance visuelle instantanée de vos projets.
 
 ---
 
