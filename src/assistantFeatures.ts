@@ -1,4 +1,8 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as os from 'os';
+import { execFile } from 'child_process';
 import { parseTdoEntries, parseTdntEntries, TdoEntry } from './lspFeatures';
 import { BUILTIN_SUBPROGRAMS, getUserSubprograms, SubprogramDef } from './subprogramCompletion';
 
@@ -495,13 +499,218 @@ function inferTypeFromExpression(expr: string, userSubs: Map<string, SubprogramD
   return 'entier';
 }
 
+export interface CompilerTdoItem {
+  names: string[];
+  type: string;
+  is_const?: boolean;
+}
+
+export interface CompilerSubprogramItem {
+  name: string;
+  kind: 'procedure' | 'function';
+  signature: string;
+  return_type: string;
+  params: Array<{ name: string; type: string; by_ref: boolean }>;
+  is_tdol_generated: boolean;
+  tdol: CompilerTdoItem[];
+  respective_tdnt: any[];
+}
+
+export interface CompilerTdoOutput {
+  program: string;
+  subprograms: CompilerSubprogramItem[];
+  is_global_tdnt_generated: boolean;
+  global_tdnt: any[];
+  is_main_tdo_generated: boolean;
+  main_tdo: CompilerTdoItem[];
+}
+
+function stripTdoSections(src: string): string {
+  const lines = src.split(/\r?\n/);
+  const result: string[] = [];
+  let inTable = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (/^(TDOL|TDOG|TDO)\b/i.test(trimmed)) {
+      inTable = true;
+      result.push('');
+      continue;
+    }
+    if (inTable) {
+      if (/^(TDNT|Algorithme|Procédure|Procedure|Fonction|Début|Debut)\b/i.test(trimmed)) {
+        inTable = false;
+        result.push(lines[i]);
+      } else {
+        result.push('');
+      }
+    } else {
+      result.push(lines[i]);
+    }
+  }
+
+  return result.join('\n');
+}
+
+export function queryCompilerTdo(code: string, exePath: string): Promise<CompilerTdoOutput> {
+  return new Promise((resolve, reject) => {
+    const stripped = stripTdoSections(code);
+    const tempFile = path.join(os.tmpdir(), `algo_tdo_${Date.now()}_${Math.random().toString(36).substring(7)}.alg`);
+    fs.writeFileSync(tempFile, stripped, 'utf8');
+
+    execFile(exePath, [tempFile, '--tdo', '--json'], (err, stdout, stderr) => {
+      try { fs.unlinkSync(tempFile); } catch {}
+      if (err) {
+        const msg = (stderr || stdout || err.message).trim();
+        reject(new Error(msg));
+        return;
+      }
+      try {
+        const data = JSON.parse(stdout) as CompilerTdoOutput;
+        resolve(data);
+      } catch (parseErr) {
+        reject(new Error(`Réponse JSON invalide de algo.exe : ${stdout}`));
+      }
+    });
+  });
+}
+
 /**
  * Command and Quick Fix to generate or update the TDO / TDOG / TDOL table.
+ * Powered by algo.exe with fallback to in-memory analysis.
  */
-export async function generateOrUpdateTDO(document: vscode.TextDocument): Promise<void> {
+export async function generateOrUpdateTDO(
+  document: vscode.TextDocument,
+  interpreterPath?: string
+): Promise<void> {
   const activeEditor = vscode.window.activeTextEditor;
   const cursorLine = activeEditor ? activeEditor.selection.active.line : 0;
 
+  // 1. Resolve compiler path
+  let exePath = interpreterPath;
+  if (!exePath || exePath.trim() === '') {
+    const config = vscode.workspace.getConfiguration('algorithme');
+    exePath = config.get<string>('interpreterPath') || 'C:\\xampp-school\\htdocs\\MesProjets\\AlgorithmCompiler\\algo.exe';
+  }
+
+  // 2. Try executing algo.exe --tdo --json
+  if (fs.existsSync(exePath)) {
+    try {
+      const compilerResult = await queryCompilerTdo(document.getText(), exePath);
+      await applyCompilerTdo(document, compilerResult, cursorLine);
+      return;
+    } catch (err: any) {
+      vscode.window.showErrorMessage(`Erreur algo.exe (--tdo) : ${err.message}`);
+      return;
+    }
+  }
+
+  // 3. Fallback: In-memory assistant
+  await applyInMemoryTdo(document, cursorLine);
+}
+
+async function applyCompilerTdo(
+  document: vscode.TextDocument,
+  result: CompilerTdoOutput,
+  cursorLine: number
+): Promise<void> {
+  const scopes = parseScopeBlocks(document);
+  if (scopes.length === 0) {
+    vscode.window.showWarningMessage("Aucun bloc d'algorithme détecté dans ce fichier.");
+    return;
+  }
+
+  const activeScope = getActiveScope(document, cursorLine);
+  const editor = await vscode.window.showTextDocument(document);
+
+  // If cursor is inside a specific subprogram: update that subprogram's TDOL
+  if (activeScope && activeScope.kind === 'subprogram') {
+    const subData = result.subprograms.find(s => s.name.toLowerCase() === activeScope.name.toLowerCase());
+    const linesToAdd: string[] = [];
+
+    if (subData && subData.tdol) {
+      for (const item of subData.tdol) {
+        const missing = item.names.filter(n =>
+          !activeScope.declaredSet.has(n.toLowerCase()) &&
+          !activeScope.formalParams.has(n.toLowerCase())
+        );
+        if (missing.length > 0) {
+          linesToAdd.push(`${missing.join(', ')} : ${item.type}`);
+        }
+      }
+    }
+
+    if (linesToAdd.length === 0) {
+      vscode.window.showInformationMessage(`Tous les objets de '${activeScope.name}' sont déjà déclarés dans le ${activeScope.tableName} (selon algo.exe) !`);
+      return;
+    }
+
+    if (activeScope.tableHeaderLine >= 0 && activeScope.tableInsertLine >= 0) {
+      await editor.edit(builder => {
+        builder.insert(new vscode.Position(activeScope.tableInsertLine, 0), linesToAdd.join('\n') + '\n');
+      });
+      vscode.window.showInformationMessage(`Objets ajoutés au ${activeScope.tableName} de '${activeScope.name}' via algo.exe !`);
+    } else {
+      const newTable = `\nTDOL\nObjet : Type/Nature\n${linesToAdd.join('\n')}\n`;
+      await editor.edit(builder => {
+        builder.insert(new vscode.Position(activeScope.finLine + 1, 0), newTable);
+      });
+      vscode.window.showInformationMessage(`Tableau TDOL généré avec succès pour '${activeScope.name}' via algo.exe !`);
+    }
+    return;
+  }
+
+  // Otherwise: update main algorithm
+  const mainScope = scopes.find(s => s.kind === 'main') || activeScope;
+  if (!mainScope) return;
+
+  const mainLinesToAdd: string[] = [];
+  if (result.main_tdo) {
+    for (const item of result.main_tdo) {
+      const missing = item.names.filter(n => !mainScope.declaredSet.has(n.toLowerCase()));
+      if (missing.length > 0) {
+        mainLinesToAdd.push(`${missing.join(', ')} : ${item.type}`);
+      }
+    }
+  }
+
+  // Also check subprograms called in main
+  const userSubs = getUserSubprograms(document);
+  for (const sub of userSubs) {
+    const callRegex = new RegExp(`(?<=^|[^\\p{L}\\p{N}_])${sub.name}\\s*\\(`, 'iu');
+    let calledInMain = false;
+    for (let line = mainScope.debutLine + 1; line < mainScope.finLine; line++) {
+      if (callRegex.test(document.lineAt(line).text)) {
+        calledInMain = true;
+        break;
+      }
+    }
+    if (calledInMain && !mainScope.declaredSet.has(sub.name.toLowerCase())) {
+      mainLinesToAdd.push(`${sub.name} : ${sub.kind === 'function' ? 'Fonction' : 'Procédure'}`);
+    }
+  }
+
+  if (mainLinesToAdd.length === 0) {
+    vscode.window.showInformationMessage(`Tous les objets de l'algorithme principal sont déjà déclarés dans le ${mainScope.tableName} (selon algo.exe) !`);
+    return;
+  }
+
+  if (mainScope.tableHeaderLine >= 0 && mainScope.tableInsertLine >= 0) {
+    await editor.edit(builder => {
+      builder.insert(new vscode.Position(mainScope.tableInsertLine, 0), mainLinesToAdd.join('\n') + '\n');
+    });
+    vscode.window.showInformationMessage(`Objets ajoutés au ${mainScope.tableName} de '${mainScope.name}' via algo.exe !`);
+  } else {
+    const tableHeader = mainScope.tableName || 'TDO';
+    const newTable = `\n${tableHeader}\nObjet : Type/Nature\n${mainLinesToAdd.join('\n')}\n`;
+    await editor.edit(builder => {
+      builder.insert(new vscode.Position(mainScope.finLine + 1, 0), newTable);
+    });
+    vscode.window.showInformationMessage(`Tableau ${tableHeader} généré avec succès via algo.exe pour '${mainScope.name}'.`);
+  }
+}
+
+async function applyInMemoryTdo(document: vscode.TextDocument, cursorLine: number): Promise<void> {
   const { scope, missingVariables, missingSubprograms } = detectUndeclaredItems(document, cursorLine);
   if (!scope) {
     vscode.window.showWarningMessage("Aucun bloc d'algorithme détecté dans ce fichier.");
@@ -514,10 +723,7 @@ export async function generateOrUpdateTDO(document: vscode.TextDocument): Promis
     return;
   }
 
-  // Prepare lines to insert
   const linesToAdd: string[] = [];
-
-  // 1. Variables grouped by type: e.g. "x : entier"
   const typeGroups = new Map<string, string[]>();
   for (const v of missingVariables) {
     const list = typeGroups.get(v.type) || [];
@@ -527,41 +733,23 @@ export async function generateOrUpdateTDO(document: vscode.TextDocument): Promis
   for (const [type, names] of typeGroups) {
     linesToAdd.push(`${names.join(', ')} : ${type}`);
   }
-
-  // 2. Subprograms: e.g. "Remplir : Procédure" or "Calc : Fonction"
   for (const sub of missingSubprograms) {
     linesToAdd.push(`${sub.name} : ${sub.type}`);
   }
 
   const editor = await vscode.window.showTextDocument(document);
-
   if (scope.tableHeaderLine >= 0 && scope.tableInsertLine >= 0) {
-    // Insert into existing table
-    const insertionText = linesToAdd.join('\n') + '\n';
     await editor.edit(builder => {
-      builder.insert(new vscode.Position(scope.tableInsertLine, 0), insertionText);
+      builder.insert(new vscode.Position(scope.tableInsertLine, 0), linesToAdd.join('\n') + '\n');
     });
-
-    const details: string[] = [];
-    if (missingVariables.length > 0) details.push(`${missingVariables.length} variable(s) (${missingVariables.map(v => v.name).join(', ')})`);
-    if (missingSubprograms.length > 0) details.push(`${missingSubprograms.length} sous-programme(s) (${missingSubprograms.map(s => s.name).join(', ')})`);
-
-    vscode.window.showInformationMessage(
-      `${details.join(' et ')} ajouté(s) avec succès au ${scope.tableName} de '${scope.name}'.`
-    );
+    vscode.window.showInformationMessage(`Objets ajoutés avec succès au ${scope.tableName} de '${scope.name}'.`);
   } else {
-    // Create a new table right after the finLine
     const tableHeader = scope.tableName || (scope.kind === 'main' ? 'TDO' : 'TDOL');
     const newTableText = `\n${tableHeader}\nObjet : Type/Nature\n${linesToAdd.join('\n')}\n`;
-    const insertPos = new vscode.Position(scope.finLine + 1, 0);
-
     await editor.edit(builder => {
-      builder.insert(insertPos, newTableText);
+      builder.insert(new vscode.Position(scope.finLine + 1, 0), newTableText);
     });
-
-    vscode.window.showInformationMessage(
-      `Tableau ${tableHeader} généré avec succès pour '${scope.name}' avec ${totalMissing} élément(s).`
-    );
+    vscode.window.showInformationMessage(`Tableau ${tableHeader} généré avec succès pour '${scope.name}' (${totalMissing} élément(s)).`);
   }
 }
 

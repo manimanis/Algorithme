@@ -150,6 +150,39 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
+  // Helper to obtain and validate the compiler/interpreter executable path
+  async function getInterpreterPath(): Promise<string | undefined> {
+    const config = vscode.workspace.getConfiguration('algorithme');
+    let interpreterPath = config.get<string>('interpreterPath');
+    if (!interpreterPath || interpreterPath.trim() === '') {
+      interpreterPath = 'C:\\xampp-school\\htdocs\\MesProjets\\AlgorithmCompiler\\algo.exe';
+    }
+
+    if (!fs.existsSync(interpreterPath)) {
+      const chooseAction = "Sélectionner algo.exe...";
+      const selected = await vscode.window.showErrorMessage(
+        `L'interpréteur d'algorithmes est introuvable à l'emplacement configuré : ${interpreterPath}`,
+        chooseAction
+      );
+      if (selected === chooseAction) {
+        const picked = await vscode.window.showOpenDialog({
+          canSelectMany: false,
+          openLabel: "Sélectionner algo.exe",
+          filters: { 'Exécutables': ['exe', 'bat', 'cmd', '*'] }
+        });
+        if (picked && picked[0]) {
+          interpreterPath = picked[0].fsPath;
+          await config.update('interpreterPath', interpreterPath, vscode.ConfigurationTarget.Global);
+          vscode.window.showInformationMessage(`Chemin de l'interpréteur mis à jour : ${interpreterPath}`);
+          return interpreterPath;
+        }
+      }
+      return undefined;
+    }
+
+    return interpreterPath;
+  }
+
   // Register Assistant Command: Générer / Mettre à jour le TDO
   context.subscriptions.push(
     vscode.commands.registerCommand('algorithme.generateTDO', async (fileUri?: vscode.Uri) => {
@@ -163,7 +196,8 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showWarningMessage("Veuillez ouvrir un fichier d'algorithme (.alg).");
         return;
       }
-      await generateOrUpdateTDO(document);
+      const interpreterPath = await getInterpreterPath();
+      await generateOrUpdateTDO(document, interpreterPath);
     })
   );
 
@@ -549,39 +583,6 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   context.subscriptions.push(previewCommand);
-
-  // Helper to obtain and validate the compiler/interpreter executable path
-  async function getInterpreterPath(): Promise<string | undefined> {
-    const config = vscode.workspace.getConfiguration('algorithme');
-    let interpreterPath = config.get<string>('interpreterPath');
-    if (!interpreterPath || interpreterPath.trim() === '') {
-      interpreterPath = 'C:\\xampp-school\\htdocs\\MesProjets\\AlgorithmCompiler\\algo.exe';
-    }
-
-    if (!fs.existsSync(interpreterPath)) {
-      const chooseAction = "Sélectionner algo.exe...";
-      const selected = await vscode.window.showErrorMessage(
-        `L'interpréteur d'algorithmes est introuvable à l'emplacement configuré : ${interpreterPath}`,
-        chooseAction
-      );
-      if (selected === chooseAction) {
-        const picked = await vscode.window.showOpenDialog({
-          canSelectMany: false,
-          openLabel: "Sélectionner algo.exe",
-          filters: { 'Exécutables': ['exe', 'bat', 'cmd', '*'] }
-        });
-        if (picked && picked[0]) {
-          interpreterPath = picked[0].fsPath;
-          await config.update('interpreterPath', interpreterPath, vscode.ConfigurationTarget.Global);
-          vscode.window.showInformationMessage(`Chemin de l'interpréteur mis à jour : ${interpreterPath}`);
-          return interpreterPath;
-        }
-      }
-      return undefined;
-    }
-
-    return interpreterPath;
-  }
 
   // --- Execution Command (Lancement de l'interpréteur algo.exe) ---
   const runCommand = vscode.commands.registerCommand('algorithme.run', async (fileUri?: vscode.Uri) => {

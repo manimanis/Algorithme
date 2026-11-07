@@ -18,14 +18,14 @@ Début
   Ecrire("Major de promotion : ", major.nom, " avec ", major.moyenne)
 Fin
 
+TDO
+Objet : Type/Nature
+major : Etudiant
+classe : Tableau de 2 Etudiant
+i : entier
+
 TDNT
 Etudiant = Enregistrement
   nom : chaîne
   moyenne : réel
 Fin
-
-TDO
-Objet : Type/Nature
-classe : Tableau de 2 Etudiant
-major : Etudiant
-i : entier

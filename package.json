@@ -52,8 +52,8 @@
       },
       {
         "command": "algorithme.generateTDO",
-        "title": "Algorithme : Générer / Mettre à jour le TDO",
-        "shortTitle": "Générer / Compléter le TDO",
+        "title": "Algorithme : Générer / Mettre à jour le TDO/TDNT (via algo.exe)",
+        "shortTitle": "Générer TDO (algo.exe)",
         "icon": "$(table)"
       },
       {

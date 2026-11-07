@@ -7,6 +7,10 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 ## [2.0.5] - 2026-11-07
 
 ### Added
+- **Génération du TDO/TDNT basée sur le compilateur officiel (`algo.exe`)** :
+  - La commande `Algorithme : Générer / Mettre à jour le TDO/TDNT` délègue désormais directement l'analyse et la génération des tables à l'outil `algo.exe` via son option native `--tdo --json`.
+  - Inférer et vérifier avec une précision sémantique absolue les types de variables (`entier`, `réel`, `chaîne`, `booléen`, `Tableau`, `Matrice`, `Enregistrement`, etc.), les paramètres par valeur/référence et les sous-programmes à déclarer.
+  - Mise à jour ou insertion automatique des tableaux `TDO`, `TDOL` et `TDNT` dans le document avec retour d'erreurs claires du compilateur si la syntaxe de l'algorithme est incorrecte.
 - **Icône personnalisée pour les fichiers d'algorithmes** :
   - Intégration de l'icône dédiée `.algo` pour les fichiers `.alg`, `.algo` et `.algorithme` directement dans l'explorateur VS Code (`contributes.languages[].icon`).
   - Ajout des versions optimisées et détourées haute résolution dans `icons/` (`algo.png`, `algo-light.png`, `algo-dark.png` et `algorithme.ico`).
