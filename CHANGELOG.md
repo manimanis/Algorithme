@@ -4,6 +4,45 @@ Toutes les modifications notables apportées à l'extension **Algorithme Tunisie
 
 ---
 
+## [2.0.7] - 2026-11-08
+
+### Improved
+- **Simplification de la liste des symboles (Outline & Ctrl+Shift+O)** :
+  - Suppression de l'affichage des variables et objets individuels sous les tables `TDO`, `TDOG`, `TDOL` et `TDNT` afin d'éviter d'encombrer l'arborescence.
+  - L'arborescence est désormais strictement épurée à deux niveaux :
+    ```text
+    Nom du module (Fonction ou Procédure)
+    ├── TDOL
+    └── TDNT (si existant)
+    Algorithme Principal
+    ├── TDO / TDOG
+    └── TDNT (si existant)
+    ```
+  - Un clic sur un tableau (`TDO`, `TDOL`, `TDNT`) positionne immédiatement le curseur directement sur l'en-tête de ce tableau.
+
+---
+
+## [2.0.6] - 2026-11-08
+
+### Added & Improved
+- **Organisation hiérarchique des symboles du document (Plan & Ctrl+Shift+O)** :
+  - Restructuration complète de l'Outline / Palette de symboles selon une arborescence claire et intuitive :
+    ```text
+    Nom du sous-programme (Fonction / Procédure)
+    ├── TDOL (Tableau des Objets Locaux)
+    │   └── Variables / Sous-programmes locaux
+    └── TDNT (si déclaré localement)
+    Algorithme Principal
+    ├── TDO / TDOG (Tableau des Objets Globaux)
+    │   └── Variables / Procédures / Fonctions
+    └── TDNT (Tableau des Nouveaux Types)
+        └── Types définis
+    ```
+  - Chaque module (sous-programme ou algorithme principal) forme un nœud parent dédié contenant strictement ses tables d'objets associées et leurs déclarations.
+  - Fonctionne de manière robuste quel que soit l'ordre des modules dans le fichier (sous-programmes en tête ou algorithme principal en début).
+
+---
+
 ## [2.0.5] - 2026-11-07
 
 ### Added

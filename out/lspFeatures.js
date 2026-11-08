@@ -175,67 +175,133 @@ function parseTdntEntries(document) {
 }
 /**
  * DocumentSymbolProvider: Builds the hierarchical Outline in the VS Code sidebar.
+ * Organizes symbols as:
+ * Nom du module
+ *   - TDOL
+ *   - TDNT
+ * Algorithme Principal
+ *   - TDO / TDOG
+ *   - TDNT
  */
 class AlgorithmeDocumentSymbolProvider {
     provideDocumentSymbols(document) {
-        const symbols = [];
-        let mainAlgoSymbol = null;
-        let currentSubprogramSymbol = null;
-        let currentTableSymbol = null;
+        const blocks = [];
+        // 1. Identify all blocks (Fonction, Procédure, Algorithme)
         for (let i = 0; i < document.lineCount; i++) {
             const line = document.lineAt(i);
             const trimmed = line.text.trim();
             if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('/*'))
                 continue;
-            // 1. Algorithme header
-            const algoMatch = trimmed.match(/^Algorithme\s+([\p{L}_][\p{L}\p{N}_]*)/iu);
-            if (algoMatch) {
-                const fullRange = new vscode.Range(i, 0, document.lineCount - 1, 0);
-                mainAlgoSymbol = new vscode.DocumentSymbol(algoMatch[1], 'Algorithme principal', vscode.SymbolKind.Package, fullRange, line.range);
-                symbols.push(mainAlgoSymbol);
-                continue;
-            }
-            // 2. Subprograms: Fonction or Procédure
-            const fnMatch = trimmed.match(/^Fonction\s+([\p{L}_][\p{L}\p{N}_]*)/iu);
+            // Fonction
+            const fnMatch = trimmed.match(/^Fonction\s+([\p{L}_][\p{L}\p{N}_]*)\s*(?:\(([^)]*)\))?\s*(?::\s*([\p{L}_][\p{L}\p{N}_]*))?/iu);
             if (fnMatch) {
-                const fnSym = new vscode.DocumentSymbol(fnMatch[1], trimmed, vscode.SymbolKind.Function, line.range, line.range);
-                symbols.push(fnSym);
-                currentSubprogramSymbol = fnSym;
+                const name = fnMatch[1];
+                const params = fnMatch[2] ? `(${fnMatch[2].trim()})` : '()';
+                const retType = fnMatch[3] ? `: ${fnMatch[3].trim()}` : '';
+                blocks.push({
+                    kind: 'function',
+                    name,
+                    signature: `Fonction${params}${retType}`,
+                    startLine: i,
+                    endLine: i
+                });
                 continue;
             }
-            const procMatch = trimmed.match(/^Proc[eé]dure\s+([\p{L}_][\p{L}\p{N}_]*)/iu);
+            // Procédure
+            const procMatch = trimmed.match(/^Proc[eé]dure\s+([\p{L}_][\p{L}\p{N}_]*)\s*(?:\(([^)]*)\))?/iu);
             if (procMatch) {
-                const procSym = new vscode.DocumentSymbol(procMatch[1], trimmed, vscode.SymbolKind.Method, line.range, line.range);
-                symbols.push(procSym);
-                currentSubprogramSymbol = procSym;
+                const name = procMatch[1];
+                const params = procMatch[2] ? `(${procMatch[2].trim()})` : '()';
+                blocks.push({
+                    kind: 'procedure',
+                    name,
+                    signature: `Procédure${params}`,
+                    startLine: i,
+                    endLine: i
+                });
                 continue;
             }
-            // 3. Table sections: TDO, TDOL, TDOG, TDNT
-            const tableMatch = trimmed.match(/^(TDNT|TDOL|TDOG|TDO)\b/i);
-            if (tableMatch) {
-                currentSubprogramSymbol = null;
-                const tableName = tableMatch[1].toUpperCase();
-                currentTableSymbol = new vscode.DocumentSymbol(tableName, tableName === 'TDNT' ? 'Tableau des Nouveaux Types' : 'Tableau de Déclaration des Objets', vscode.SymbolKind.Namespace, line.range, line.range);
-                symbols.push(currentTableSymbol);
+            // Algorithme header
+            const algoMatch = trimmed.match(/^Algorithme(?:\s+([\p{L}_][\p{L}\p{N}_]*))?/iu);
+            if (algoMatch) {
+                const name = algoMatch[1] || 'Algorithme Principal';
+                blocks.push({
+                    kind: 'main',
+                    name,
+                    signature: name,
+                    startLine: i,
+                    endLine: i
+                });
                 continue;
             }
-            // Add child symbols inside TDO / TDNT
-            if (currentTableSymbol) {
-                if (/^\|?\s*(objet|type)\s*[:|=]/i.test(trimmed) || /^[\+\-\|─┌┬┐├┼┤└┴┘╔╦╗╠╬╣╚╩╝═║\s]+$/.test(trimmed)) {
+        }
+        if (blocks.length === 0) {
+            blocks.push({
+                kind: 'main',
+                name: 'Algorithme Principal',
+                signature: 'Algorithme Principal',
+                startLine: 0,
+                endLine: Math.max(0, document.lineCount - 1)
+            });
+        }
+        // Sort blocks by start line and establish boundaries
+        blocks.sort((a, b) => a.startLine - b.startLine);
+        for (let idx = 0; idx < blocks.length; idx++) {
+            const nextStart = idx + 1 < blocks.length ? blocks[idx + 1].startLine : document.lineCount;
+            blocks[idx].endLine = Math.max(blocks[idx].startLine, nextStart - 1);
+        }
+        const symbols = [];
+        // 2. Build symbols for each block with child tables and variables
+        for (const block of blocks) {
+            const blockStartLine = block.startLine;
+            const blockEndLine = block.endLine;
+            const blockRange = new vscode.Range(blockStartLine, 0, blockEndLine, document.lineAt(blockEndLine).text.length);
+            const blockSelectionRange = document.lineAt(blockStartLine).range;
+            const blockSymbol = new vscode.DocumentSymbol(block.kind === 'main' ? 'Algorithme Principal' : block.name, block.kind === 'main' ? (block.name !== 'Algorithme Principal' ? block.name : '') : block.signature, block.kind === 'main'
+                ? vscode.SymbolKind.Package
+                : (block.kind === 'function' ? vscode.SymbolKind.Function : vscode.SymbolKind.Method), blockRange, blockSelectionRange);
+            const tables = [];
+            let currentTable = null;
+            for (let i = blockStartLine; i <= blockEndLine; i++) {
+                const line = document.lineAt(i);
+                const trimmed = line.text.trim();
+                if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('/*'))
+                    continue;
+                // Table header detection
+                const tableMatch = trimmed.match(/^(TDNT|TDOL|TDOG|TDO)\b/i);
+                if (tableMatch) {
+                    const tableName = tableMatch[1].toUpperCase();
+                    let tableDesc = 'Tableau des Objets';
+                    if (tableName === 'TDOL')
+                        tableDesc = 'Tableau des Objets Locaux';
+                    else if (tableName === 'TDOG')
+                        tableDesc = 'Tableau des Objets Globaux';
+                    else if (tableName === 'TDNT')
+                        tableDesc = 'Tableau des Nouveaux Types';
+                    const tableSym = new vscode.DocumentSymbol(tableName, tableDesc, tableName === 'TDNT' ? vscode.SymbolKind.Interface : vscode.SymbolKind.Namespace, line.range, line.range);
+                    currentTable = {
+                        symbol: tableSym,
+                        startLine: i,
+                        endLine: i
+                    };
+                    tables.push(currentTable);
                     continue;
                 }
-                const clean = trimmed.replace(/^\|\s*/, '').replace(/\s*\|$/, '');
-                const sepIdx = clean.indexOf(':') !== -1 ? clean.indexOf(':') : clean.indexOf('=');
-                if (sepIdx !== -1) {
-                    const left = clean.substring(0, sepIdx).trim();
-                    const right = clean.substring(sepIdx + 1).trim();
-                    const names = left.split(',').map(n => n.trim()).filter(Boolean);
-                    for (const name of names) {
-                        const varSymbol = new vscode.DocumentSymbol(name, right, currentTableSymbol.name === 'TDNT' ? vscode.SymbolKind.Interface : vscode.SymbolKind.Variable, line.range, line.range);
-                        currentTableSymbol.children.push(varSymbol);
-                    }
+                // Section reset (e.g. Début / Debut)
+                if (/^(?:Début|Debut)\b/i.test(trimmed) && currentTable) {
+                    currentTable = null;
+                    continue;
+                }
+                if (currentTable) {
+                    currentTable.endLine = i;
                 }
             }
+            // Update table ranges to properly enclose their lines (tables are leaf nodes, without listing inner objects)
+            for (const t of tables) {
+                t.symbol.range = new vscode.Range(t.startLine, 0, t.endLine, document.lineAt(t.endLine).text.length);
+                blockSymbol.children.push(t.symbol);
+            }
+            symbols.push(blockSymbol);
         }
         return symbols;
     }
